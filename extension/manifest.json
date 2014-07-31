@@ -1,0 +1,54 @@
+{
+  "manifest_version": 2,
+
+  "name": ".no Plus Block",
+  "description": "Blokkér VG+, DB+ og annet tull og vås fra avisforsider",
+  "version": "1.0",
+  "icons":
+  {
+    "32": "img/1406848496_icon-ios7-trash-outline.png"
+  },
+  "author":
+  [
+    {
+      "name": "Rune Bjerke",
+      "email": "plusblock.chrome@green.spoox.org"
+    }    
+  ],
+
+  "permissions":
+  [
+    "*://*.vg.no/",
+    "*://*.db.no/",
+    "*://*.dagbladet.no/"
+  ],
+
+  "content_scripts":
+  [
+    {
+      "matches":
+      [
+        "*://*.db.no/*",
+        "*://*.dagbladet.no/*",
+        "*://*.vg.no/*"
+      ],
+      "js": [ "content_script.js" ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "background":
+  {
+    "scripts":
+    [
+      "background.js"
+    ],
+    "persistent": false
+  },
+  
+  "page_action":
+  {
+    "default_icon": "img/1406848496_icon-ios7-trash-outline.png"
+  }
+} 
