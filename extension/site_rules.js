@@ -1,15 +1,31 @@
 console.log("######## site_rules.js ########")
 
+
+var replacementMethods =
+[
+  { id: 'default', title: 'Standardmelding' },
+  { id: 'empty', title: 'Tomrom' },
+  { id: 'placekitten', title: 'Katter', imageTemplate: 'http://placekitten.com/{width}/{height}' },
+  { id: 'placecreature', title: 'Dyr', imageTemplate: 'http://placecreature.com/{width}/{height}' },
+  { id: 'placebee', title: 'Bier', imageTemplate: 'http://placebee.co.uk/{width}x{height}' },
+  { id: 'placeskull', title: 'Skaller', imageTemplate: 'http://placeskull.com/{width}/{height}' },
+  { id: 'placeboobs', title: 'Pupper', imageTemplate: 'http://worksafe.placeboobs.com/{width}/{height}' },
+//  { id: 'placelorempixel', title: 'Lorem pixel', imageTemplate: 'http://lorempixel.com/{width}/{height}' },
+  { id: 'placebeer', title: 'Øl', imageTemplate: 'http://beerhold.it/{width}/{height}' },
+  { id: 'placeholder', title: 'Generisk', imageTemplate: 'http://placehold.it/{width}x{height}' },
+  { id: 'delete', title: 'Fjern helt'}
+];
+
 var defaultCategoryColors =
 {
-  'video': '#ffc',
-  'sports': '#ccf',
+  'video': '#ffa',
+  'sports': '#9cf',
   'food': null,
   'premium': '#fcc',
   'fashion': '#fcf',
   'entertainment': '#ccf',
   'lifestyle': '#cff'
-}
+};
 
 var siteRules =
 [
@@ -296,8 +312,72 @@ var siteRules =
     title: 'TV2',
     url: 'http://www.tv2.no',
     host: '(^|\\.)(tv2)\\.no$',
+    idAttribute: 'data-lab-articleid',
+    parentSelector: '\\b(articlebox|story)\\b',
+    injectCSS: 'width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;',
+    overlaySize: '',
     contentGroups:
     [
+      {
+        id: 'underholdning',
+        title: 'Underholdning',
+        category: 'entertainment',
+        rules:
+        [
+          {
+            host: 'tv2\\.no$',
+            path: '^/\\d+/\\d+/\\d+/underholdning/'
+          }
+        ]
+      },
+      {
+        id: 'sport',
+        title: 'Sport',
+        category: 'sports',
+        rules:
+        [
+          {
+            host: 'tv2\\.no$',
+            path: '^/\\d+/\\d+/\\d+/sport/'
+          }
+        ]
+      },
+      {
+        id: 'skjonnhet',
+        title: 'Skjønnhet',
+        category: 'fashion',
+        rules:
+        [
+          {
+            host: 'tv2\\.no$',
+            path: '^/\\d+/\\d+/\\d+/nyheter/skjonnhet/'
+          }
+        ]
+      },
+      {
+        id: 'broom',
+        title: 'Broom',
+        category: 'cars',
+        rules:
+        [
+          {
+            host: 'tv2\\.no$',
+            path: '^/\\d+/\\d+/\\d+/broom/'
+          }
+        ]
+      },
+      {
+        id: 'tv2play',
+        title: 'TV2 Play',
+        category: 'video',
+        rules:
+        [
+          {
+            host: 'tv2\\.no$',
+            path: '^/play//'
+          }
+        ]
+      }
     ]
   }
-]
+];
