@@ -1,17 +1,37 @@
 body, html
 {
-  margin: 0px;
-  padding: 0px;
+	font-family: Tahoma, Arial;
+	font-size: 10pt;	
+	margin: 0px;
+	padding: 0px;
 }
 
-body, h1
+h1
 {
-  font-size: 10pt;
-  font-family: Tahoma,Arial;
-  min-width: 200px;
+	font-size: 12pt;
+	border-bottom: solid 1px #333;
 }
 
-h1 { font-size: 12pt; }
+h2
+{
+	font-size: 10pt;
+	border-bottom: solid 1px #999;
+}
+
+h3
+{
+	font-size: 10pt;
+}
+
+/* ****** options ****** */
+
+#saved
+{
+	color: green;
+	font-weight: bold;
+}
+
+/* ****** details stats ****** */
 
 li { margin: 0px; white-space: nowrap; }
 
@@ -26,9 +46,12 @@ ul { list-style-type: none; margin: 0px; padding: 0px; }
   margin-right: 8px;
 }
 
-#stats, #opts
+/* ****** details stats ****** */
+
+#stats, #opts, #content
 {
   padding: 8px 16px 8px 16px;
+  clear: both;
 }
 
 #header
@@ -43,25 +66,37 @@ ul { list-style-type: none; margin: 0px; padding: 0px; }
   background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(204,204,204,1) 100%);
   background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(204,204,204,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#cccccc',GradientType=0 );
+
+  height: 64px;
 }
 
 #logo
 {
   float: left;
+  max-width: 72px;
+  margin-top: -4px;
 }
 
 #subtitle
 {
+	display: block;
 }
 
 #title
 {
   font-weight: bold;
+  display: block;
+}
+
+#headExtra
+{
+	display: block;
+	margin-top: 10px;
+	font-size: 7pt;
 }
 
 #stats
 {
-  clear: both;
   display: none;
 }
 
@@ -80,7 +115,7 @@ a:hover
   color: #666;
 }
 
-#opts img
+.optsImage
 {
   max-width: 14px;
   vertical-align: text-bottom;

@@ -20,6 +20,8 @@
   [
     "*://*.vg.no/",
     "*://*.db.no/",
+    "*://*.nrk.no/",
+    "*://*.tv2.no/",
     "*://*.dagbladet.no/",
     "storage"
   ],
@@ -29,9 +31,11 @@
     {
       "matches":
       [
-        "*://*.db.no/*",
-        "*://*.dagbladet.no/*",
-        "*://*.vg.no/*"
+        "*://*.db.no/",
+        "*://*.dagbladet.no/",
+        "*://*.vg.no/",
+        "*://*.nrk.no/",
+        "*://*.tv2.no/"
       ],
       "js": [ "site_rules.js", "content_script.js" ],
       "run_at": "document_idle",
@@ -50,7 +54,8 @@
   
   "browser_action":
   {
-    "default_icon": "img/1406848496_icon-ios7-trash-outline.png"
+    "default_icon": "img/1406848496_icon-ios7-trash-outline.png",
+    "default_popup": "details.html"
   },
 
   "options_page": "options.html"

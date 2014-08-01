@@ -1,19 +1,26 @@
 function init()
 {
-  var arg = JSON.parse(unescape(document.location.search.substring(1)));
-  var list = document.getElementById("list");
-
-  //alert(JSON.stringify(arg,null,'  '));
-
-  //arg.stats.sort(function(a,b) { return a.title.localeCompare(b.title) })
-  arg.stats.sort(function(a,b) { return b.count - a.count; })
-
-  for (var i=0; arg.stats.length>i; i++)
+  var query = document.location.search || "";
+  if (query && query.length>0) query = query.substring(1);
+  if (query != "")
   {
-    var li = document.createElement("li");
-    var g = arg.stats[i];
-    li.innerHTML = '<span class="colorBox" style="background-color: ' + g.color + '"></span>' + g.title + ": " + g.count;
-    list.appendChild(li);
+    var arg = JSON.parse(unescape(query));
+    var list = document.getElementById("list");
+
+    //arg.stats.sort(function(a,b) { return a.title.localeCompare(b.title) })
+    arg.stats.sort(function(a,b) { return b.count - a.count; })
+
+    for (var i=0; arg.stats.length>i; i++)
+    {
+      var li = document.createElement("li");
+      var g = arg.stats[i];
+      li.innerHTML = '<span class="colorBox" style="background-color: ' + g.color + '"></span>' + g.title + ": " + g.count;
+      list.appendChild(li);
+    }
+
+    if (arg.count > 0)
+      document.getElementById("stats").style.display = "block";
+
   }
 }
 

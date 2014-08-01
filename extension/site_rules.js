@@ -1,17 +1,30 @@
 console.log("######## site_rules.js ########")
 
+var defaultCategoryColors =
+{
+  'video': '#ffc',
+  'sports': '#ccf',
+  'food': null,
+  'premium': '#fcc',
+  'fashion': '#fcf',
+  'entertainment': '#ccf',
+  'lifestyle': '#cff'
+}
+
 var siteRules =
 [
   {
     id: 'vg',
     title: 'VG',
     host: '(^|\\.)vg\\.no$',
+    parentSelector: '\\b(article-extract|article-extract-full)\\b',
+    injectCSS: 'width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;',
+    overlaySize: '',
     contentGroups:
     [
       {
         id: 'vgtv',
         title: 'VGTV',
-        color: '#ccc',
         category: 'video',
         rules:
         [
@@ -22,9 +35,20 @@ var siteRules =
         ]
       },
       {
+        id: 'godt',
+        title: 'Godt.no',
+        category: 'food',
+        rules:
+        [
+          {
+            host: 'godt\\.no$',
+            path: ''
+          },
+        ]
+      },
+      {
         id: 'sport',
         title: 'Sport',
-        color: '#cfc',
         category: 'sports',
         rules:
         [
@@ -41,7 +65,6 @@ var siteRules =
       {
         id: 'pluss',
         title: 'VG+',
-        color: '#fcc',
         category: 'premium',
         rules:
         [
@@ -58,7 +81,6 @@ var siteRules =
       {
         id: 'minmote',
         title: 'Min mote',
-        color: '#fcf',
         category: 'fashion',
         rules:
         [
@@ -71,7 +93,6 @@ var siteRules =
       {
         id: 'rampelys',
         title: 'Rampelys',    
-        color: '#ccf',
         category: 'entertainment',
         rules:
         [
@@ -84,7 +105,6 @@ var siteRules =
       {
         id: 'vektklubb',
         title: 'Vektklubb',
-        color: '#cff',
         category: 'lifestyle',
         rules:
         [
@@ -101,12 +121,16 @@ var siteRules =
     title: 'Dagbladet',
     url: 'http://www.dagbladet.no',
     host: '(^|\\.)(db|dagbladet)\\.no$',
+    parentSelector: '\\bcontainer|plussbox_wrapper|plussbox_article\\b',
+    injectCSS: 'width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;',
+    setRelativePositionOnParent: true,
+    overlaySize: 'client',
     contentGroups:
     [
       {
         id: 'dbtv',
         title: 'DBTV',
-        category: 'videos',
+        category: 'video',
         rules:
         [
           {
@@ -123,7 +147,35 @@ var siteRules =
         [
           {
             host: '(db|dagbladet)\\.no$',
-            path: '^/\d+/\d+/\d+/tema/pluss/'
+            path: '^/pluss/'
+          },
+          {
+            host: '(db|dagbladet)\\.no$',
+            path: '^/\\d+/\\d+/\\d+/[^/]+/pluss/'
+          }
+        ]
+      },
+      {
+        id: 'reise',
+        title: 'Reise',
+        category: 'premium',
+        rules:
+        [
+          {
+            host: '(db|dagbladet)\\.no$',
+            path: '^/\\d+/\\d+/\\d+/tema/reise/'
+          }
+        ]
+      },
+      {
+        id: 'kultur',
+        title: 'Kultur',
+        category: 'entertainment',
+        rules:
+        [
+          {
+            host: '(db|dagbladet)\\.no$',
+            path: '^/\\d+/\\d+/\\d+/kultur/'
           }
         ]
       },
@@ -135,7 +187,7 @@ var siteRules =
         [
           {
             host: '(db|dagbladet)\\.no$',
-            path: '^/\d+/\d+/\d+/sport/'
+            path: '^/\\d+/\\d+/\\d+/sport/'
           }
         ]
       },
@@ -182,12 +234,16 @@ var siteRules =
     title: 'NRK',
     url: 'http://www.nrk.no',
     host: '(^|\\.)(nrk)\\.no$',
+    parentSelector: '\\b(article-extract|article-extract-full)\\b',
+    injectCSS: 'width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;',
+    overlaySize: '',
     contentGroups:
     [
       {
         id: 'kultur',
         title: 'Kultur',
         category: 'entertainment',
+        default: false,
         rules:
         [
           {
@@ -200,6 +256,7 @@ var siteRules =
         id: 'livsstil',
         title: 'Livsstil',
         category: 'lifestyle',
+        default: false,
         rules:
         [
           {

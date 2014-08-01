@@ -19,6 +19,13 @@ var app = angular.module('optionsApp', [])
 
     $scope.resetSiteRules = function()
     {
+      for (var i=0; siteRules.length>i; i++)
+        for (var j=0; siteRules[i].contentGroups.length>j; j++)
+        {
+          var g = siteRules[i].contentGroups[j];
+          g.enabled = (g.default == null ? true : g.default);
+        }
+
       $scope.siteRules = siteRules;
     }
 
