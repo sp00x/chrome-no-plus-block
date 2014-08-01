@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html ng-app="optionsApp" ng-csp>
+  <head>
+    <script src="lib/angular.min.js" type="text/javascript"></script>    
+    <link rel="stylesheet" type="text/css" href="lib/angular-csp.css" />
+    <!--
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-csp.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js" type="text/javascript"></script>
+    -->
+    <script src="site_rules.js" type="text/javascript"></script> 
+    <script src="options.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="options.css" />
+  </head>
+  <body ng-controller="OptionsController as o">
+
+    <h2>Nettsteder</h2>
+
+    <span ng-repeat="site in siteRules | sort:'title'">
+      <h3>{{site.title}}</h3>
+      <label class="contentTypeFilter" ng-repeat="cg in site.contentGroups | sort:'title'">
+        <input type="checkbox" ng-model="cg.enabled"> {{cg.title}}
+      </label>
+    </span>
+
+    <h2>Innstillinger</h2>
+
+    <h3>Erstatt med..</h3>
+
+    <label ng-repeat="repl in replacements">
+      <input type="radio" name="replaceWith" value="{{repl.id}}" ng-model="options.replaceWith"> {{repl.title}}
+    </label>
+
+    <p>
+      <input type="button" id="saveButton" ng-click="save()" value="Lagre" />
+      <input type="button" id="resetSiteRulesButton" ng-click="resetSiteRules()" value="RST" />
+    </p>
+
+    <span ng-show="saved" id="saved">
+      Innstillingene er lagret!
+    </span>
+
+<!--
+    <h2>Debug</h2>
+    <h3>options</h3>
+    {{options}}
+    <h3>siteRules</h3>
+    {{siteRules}}
+-->
+  </body>
+</html>

@@ -1,0 +1,47 @@
+/* options.css */
+
+body, html
+{
+	font-family: Arial;
+	font-size: 10pt;	
+}
+
+html
+{
+	min-width: 600px;
+}
+
+h1
+{
+	font-size: 14pt;
+	border-bottom: solid 1px #333;
+}
+
+h2
+{
+	font-size: 12pt;
+	border-bottom: solid 1px #999;
+}
+
+h3
+{
+	font-size: 11pt;
+}
+
+label.contentTypeFilter
+{
+	/*display: block;*/
+}
+
+/* for some reason ng-show/ng-hide doesn't seem to work without this..? */
+/*
+.ng-hide
+{
+	display: none;
+}
+*/
+#saved
+{
+	color: green;
+	font-weight: bold;
+}

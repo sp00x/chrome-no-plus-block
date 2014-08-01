@@ -1,7 +1,7 @@
 console.log("############# background.js #############");
 
 chrome.runtime.onMessage.addListener(onMessage);
-chrome.pageAction.onClicked.addListener(onClickPageAction);
+//chrome.pageAction.onClicked.addListener(onClickPageAction);
 
 function onClickPageAction(tab)
 {
@@ -12,24 +12,26 @@ function onMessage(request, sender, sendResponse)
 {
 	// debug 
 	//console.log("sender: %o", sender);
-	//console.log("message: %o", request);
-
-	// Show the page action for the tab that the sender (content script)
-	// was on.
+	console.log("message: %o", request);
 
 	stats = [];
-	for (var i in request.rules)
+	for (var i=0; request.stats.length>i; i++)
 	{
-		var r = request.rules[i];
-		delete r.rules;
+		var r = request.stats[i];
 		if (r.count > 0)
 			stats.push(r.title + ': ' + r.count);
 	}
 
+	chrome.browserAction.setTitle({ title: stats.join("\n"), tabId: sender.tab.id });
+	chrome.browserAction.setPopup({ tabId: sender.tab.id, popup: "details.html?" + escape(JSON.stringify(request)) })
+	chrome.browserAction.setBadgeText({ tabId: sender.tab.id, text: "" + request.count});
+
+/*
 	chrome.pageAction.setTitle({ title: stats.join("\n"), tabId: sender.tab.id });
 	chrome.pageAction.setIcon({ imageData: drawIcon(request.count), tabId: sender.tab.id });
 	chrome.pageAction.show(sender.tab.id);
 	chrome.pageAction.setPopup({ tabId: sender.tab.id, popup: "details.html?" + escape(JSON.stringify(request)) })
+*/
 
 	//sendResponse({farewell: "goodbye"});
 }
@@ -37,7 +39,7 @@ function onMessage(request, sender, sendResponse)
 function drawIcon(text)
 {
 	var fgColor = "#fff";
-	var bgColor = "#000";
+	var bgColor = "rgba(255,0,0,0.5)"; // "#000";
 
 	//var fgColor = "#000";
 	//var bgColor = "#ff9";

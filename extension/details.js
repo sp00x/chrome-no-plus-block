@@ -2,14 +2,18 @@ function init()
 {
   var arg = JSON.parse(unescape(document.location.search.substring(1)));
   var list = document.getElementById("list");
-  for (var i in arg.rules)
+
+  //alert(JSON.stringify(arg,null,'  '));
+
+  //arg.stats.sort(function(a,b) { return a.title.localeCompare(b.title) })
+  arg.stats.sort(function(a,b) { return b.count - a.count; })
+
+  for (var i=0; arg.stats.length>i; i++)
   {
-    if (arg.rules[i].count > 0)
-    {
-      var li = document.createElement("li");
-      li.innerHTML = '<span class="colorBox" style="background-color: ' + arg.rules[i].color + '"></span>' + arg.rules[i].title + ": " + arg.rules[i].count;
-      list.appendChild(li);
-    }
+    var li = document.createElement("li");
+    var g = arg.stats[i];
+    li.innerHTML = '<span class="colorBox" style="background-color: ' + g.color + '"></span>' + g.title + ": " + g.count;
+    list.appendChild(li);
   }
 }
 

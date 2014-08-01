@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": ".no Plus Block",
-  "description": "Blokkér VG+, DB+ og annet tull og vås fra avisforsider",
+  "description": "Blokkér VG+, DB+ og annet tull og vås fra norske avisforsider",
   "version": "1.0",
   "icons":
   {
@@ -20,7 +20,8 @@
   [
     "*://*.vg.no/",
     "*://*.db.no/",
-    "*://*.dagbladet.no/"
+    "*://*.dagbladet.no/",
+    "storage"
   ],
 
   "content_scripts":
@@ -32,7 +33,7 @@
         "*://*.dagbladet.no/*",
         "*://*.vg.no/*"
       ],
-      "js": [ "content_script.js" ],
+      "js": [ "site_rules.js", "content_script.js" ],
       "run_at": "document_idle",
       "all_frames": false
     }
@@ -47,8 +48,10 @@
     "persistent": false
   },
   
-  "page_action":
+  "browser_action":
   {
     "default_icon": "img/1406848496_icon-ios7-trash-outline.png"
-  }
-} 
+  },
+
+  "options_page": "options.html"
+}
