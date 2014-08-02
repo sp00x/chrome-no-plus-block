@@ -16,6 +16,8 @@
     }    
   ],
 
+  "update_url": "https://github.com/sp00x/chrome-no-plus-block/blob/master/updates.xml?raw=true",
+
   "permissions":
   [
     "*://*.vg.no/",

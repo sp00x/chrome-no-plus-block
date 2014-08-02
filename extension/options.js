@@ -1,5 +1,10 @@
 var app = angular.module('optionsApp', [])
 
+  .controller("AboutController", [ '$scope', function($scope)
+  {
+    $scope.manifest = chrome.runtime.getManifest();
+  }])
+
   .controller('OptionsController', ['$scope', function($scope)
   {
     $scope.tab = 'websites';
