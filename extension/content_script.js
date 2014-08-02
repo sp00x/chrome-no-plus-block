@@ -86,6 +86,14 @@
 						{
 							//console.log(logPrefix, "found outer <div>")
 							var id = p.id || p.getAttribute(match.site.idAttribute || "name");
+
+							// if it doesn't have an id, add one now
+							if (id == null)
+							{
+								id = styleSelector + "_noid_" + Math.floor(Math.random() * 0xFFFFFFFF);
+								p.id = id;
+							}
+
 							if (id && seen[id])
 							{
 								//console.log(logPrefix, "already patched");
@@ -159,7 +167,7 @@
 							.replace("{color}", color.substring(1));
 
 						// inject
-						div.innerHTML = "<img src='" + u + "' alt='" + blockText + "' class='placeholderImage'>";
+						div.innerHTML = "<img src='" + u + "' alt='" + blockText + "' class='placeholderImage' ondblclick='document.getElementById(\"" + blockIdPrefix + id + "\").style.display = \"none\"; return false;'>";
 					}
 					else if (m == "delete")
 					{

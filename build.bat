@@ -1,0 +1,1 @@
+"%localappdata%\Google\Chrome\Application\chrome.exe" --pack-extension="D:\Source\chrome\plus-crap\chrome-no-plus-block\extension" --pack-extension-key="D:\Source\chrome\plus-crap\extension.pem"

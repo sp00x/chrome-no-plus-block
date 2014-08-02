@@ -35,8 +35,8 @@ var defaultCategoryColors =
 var cssImageFilters =
 [
   { title: 'Metning', _title: "Saturation", filter: "saturate", min: 0, max: 400, unit: '%', default: 100 },
-  { title: 'Lysstyrke', _title: "Brightness", filter: "brightness", min: 0, max: 200, unit: '%', default: 100 },
   { title: 'Kontrast', _title: "Contrast", filter: "contrast", min: 0, max: 400, unit: '%', default: 100 },
+  { title: 'Lysstyrke', _title: "Brightness", filter: "brightness", min: 0, max: 200, unit: '%', default: 100 },
   { title: 'Ugjennomsiktighet', _title: "Opacity", filter: "opacity", min: 0, max: 100, unit: '%', default: 100 },
   { title: 'Invertering', _title: "Invert", filter: "invert", min: 0, max: 100, unit: '%', default: 0 },
   { title: 'Gråskala', _title: "Grayscale", filter: "grayscale", min: 0, max: 100, default: 0, unit: '%' },
