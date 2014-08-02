@@ -167,7 +167,7 @@
 							.replace("{color}", color.substring(1));
 
 						// inject
-						div.innerHTML = "<img src='" + u + "' alt='" + blockText + "' class='placeholderImage' ondblclick='document.getElementById(\"" + blockIdPrefix + id + "\").style.display = \"none\"; return false;'>";
+						div.innerHTML = "<img src='" + u + "' alt='" + blockText + "' title='" + match.contentGroup.title + "' class='placeholderImage' ondblclick='document.getElementById(\"" + blockIdPrefix + id + "\").style.display = \"none\"; return false;'>";
 					}
 					else if (m == "delete")
 					{

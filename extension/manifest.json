@@ -3,7 +3,7 @@
 
   "name": ".no Plus Block",
   "description": "Blokkér VG+, DB+ og annet tull og vås fra norske avisforsider",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "icons":
   {
     "32": "img/1406848496_icon-ios7-trash-outline.png"

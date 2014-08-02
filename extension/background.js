@@ -10,7 +10,7 @@ function onClickPageAction(tab)
 
 function onMessage(request, sender, sendResponse)
 {
-	// debug 
+	// debug
 	//console.log("sender: %o", sender);
 	console.log("message: %o", request);
 
@@ -35,6 +35,8 @@ function onMessage(request, sender, sendResponse)
 
 	//sendResponse({farewell: "goodbye"});
 }
+
+/*
 
 function drawIcon(text)
 {
@@ -71,3 +73,5 @@ function drawIcon(text)
 
 	return context.getImageData(0, 0, 19, 19);
 }
+
+*/
