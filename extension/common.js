@@ -1,5 +1,9 @@
-console.log("######## site_rules.js ########")
+console.log("######## common.js ########");
 
+var palette = 
+[
+  "#646D7E", "#2554C7", "#8D38C9", "#E4317F", "#800517", "#461B7E", "#307D7E", "#254117", "#4CC417", "#FDD017", "#F87431", "#7E2217", "#FF0000", "#827B60"
+];
 
 var replacementMethods =
 [
@@ -8,7 +12,7 @@ var replacementMethods =
   { id: 'placekitten', title: 'Katter', imageTemplate: 'http://placekitten.com/{width}/{height}' },
   { id: 'placecreature', title: 'Dyr', imageTemplate: 'http://placecreature.com/{width}/{height}' },
   { id: 'placebee', title: 'Bier', imageTemplate: 'http://placebee.co.uk/{width}x{height}' },
-  { id: 'placeskull', title: 'Skaller', imageTemplate: 'http://placeskull.com/{width}/{height}' },
+  { id: 'placeskull', title: 'Hodeskaller', imageTemplate: 'http://placeskull.com/{width}/{height}/{color}' },
   { id: 'placeboobs', title: 'Pupper', imageTemplate: 'http://worksafe.placeboobs.com/{width}/{height}' },
 //  { id: 'placelorempixel', title: 'Lorem pixel', imageTemplate: 'http://lorempixel.com/{width}/{height}' },
   { id: 'placebeer', title: 'Øl', imageTemplate: 'http://beerhold.it/{width}/{height}' },
@@ -18,16 +22,54 @@ var replacementMethods =
 
 var defaultCategoryColors =
 {
-  'video': '#ffa',
-  'sports': '#9cf',
-  'food': null,
-  'premium': '#fcc',
-  'fashion': '#fcf',
-  'entertainment': '#ccf',
-  'lifestyle': '#cff'
+  '*': palette[0],
+  'video': palette[1], //'#ffa',
+  'sports': palette[2], //'#9cf',
+  'food': palette[3], //null,
+  'premium': palette[4], //'#fcc',
+  'fashion': palette[5], //'#fcf',
+  'entertainment': palette[6], //'#ccf',
+  'lifestyle': palette[7] //'#cff'
 };
 
-var siteRules =
+var cssImageFilters =
+[
+  { title: 'Metning', _title: "Saturation", filter: "saturate", min: 0, max: 400, unit: '%', default: 100 },
+  { title: 'Lysstyrke', _title: "Brightness", filter: "brightness", min: 0, max: 200, unit: '%', default: 100 },
+  { title: 'Kontrast', _title: "Contrast", filter: "contrast", min: 0, max: 400, unit: '%', default: 100 },
+  { title: 'Ugjennomsiktighet', _title: "Opacity", filter: "opacity", min: 0, max: 100, unit: '%', default: 100 },
+  { title: 'Invertering', _title: "Invert", filter: "invert", min: 0, max: 100, unit: '%', default: 0 },
+  { title: 'Gråskala', _title: "Grayscale", filter: "grayscale", min: 0, max: 100, default: 0, unit: '%' },
+  { title: 'Sepia', _title: "Sepia", filter: "sepia", min: 0, max: 100, default: 0, unit: '%' },
+  { title: 'Kulør', _title: "Hue", filter: "hue-rotate", min: 0, max: 360, unit: 'deg', default: 0 },
+  { title: 'Uskarphet', _title: "Blur", filter: "blur", min: 0, max: 5, unit: 'px', default: 0 },
+]
+for (var i=0; cssImageFilters.length>i; i++) cssImageFilters[i].value = cssImageFilters[i].default;
+
+function buildFilters()
+{
+  var s = [];
+  for (var i=0; cssImageFilters.length>i; i++)
+  {
+    var f = cssImageFilters[i];
+    var v = f.value; //((f.value * (f.max - f.min)) + f.min);
+    if (f.round) v = Math.round(v);
+    v += (f.unit || "");
+    s.push(f.filter + "(" + v + ")");
+  }
+  return s.join(" ");
+}
+
+function applyFilterOptions(options)
+{
+  for (var i=0; cssImageFilters.length>i; i++)
+  {
+    var f = cssImageFilters[i];
+    f.value = options.imageFilters[f.filter] || f.default;
+  }
+}
+
+var defaultSiteRules =
 [
   {
     id: 'vg',

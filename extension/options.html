@@ -4,13 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="lib/angular.min.js" type="text/javascript"></script>    
     <link rel="stylesheet" type="text/css" href="lib/angular-csp.css" />
+    <link rel="stylesheet" type="text/css" href="common.css" />
+    <link rel="stylesheet" type="text/css" href="tabs.css" />
     <!--
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-csp.css" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js" type="text/javascript"></script>
     -->
-    <script src="site_rules.js" type="text/javascript"></script> 
+    <script src="common.js" type="text/javascript"></script>
     <script src="options.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="common.css" />
     <style>
       body { min-width: 600px;}
     </style>
@@ -26,22 +27,68 @@
 
     <div id="content">
 
-      <h2>Nettsteder</h2>
+      <div id="tabs-container">
 
-      <span ng-repeat="site in siteRules | sort:'title'">
-        <h3>{{site.title}}</h3>
-        <label class="contentTypeFilter" ng-repeat="cg in site.contentGroups | sort:'title'">
-          <input type="checkbox" ng-model="cg.enabled"> {{cg.title}}
-        </label>
-      </span>
+        <ul class="tabs-menu">
 
-      <h2>Innstillinger</h2>
+          <li ng-class="{current: tab == 'websites'}">
+            <a ng-click="tab = 'websites'">Nettsteder</a>
+          </li>
 
-      <h3>Erstatt med..</h3>
+          <li ng-class="{current: tab == 'replacement'}">
+            <a ng-click="tab = 'replacement'">Erstatning</a>
+          </li>
 
-      <label ng-repeat="repl in replacements">
-        <input type="radio" name="replaceWith" value="{{repl.id}}" ng-model="options.replaceWith"> {{repl.title}}
-      </label>
+        </ul>
+
+        <div class="tab">
+
+          <div class="tab-content" ng-class="{current: tab == 'replacement'}">
+
+            <b>Erstatt innhold med..</b><br>
+
+            <label ng-repeat="repl in replacements">
+              <input type="radio" name="replaceWith" value="{{repl.id}}" ng-model="options.replaceWith"> {{repl.title}}
+            </label>
+
+            <div ng-show="isPlaceholderImage">
+
+              <br>
+              <b>Forhåndsvisning (bildene vil variere)</b><br>
+
+              <img ng-src="{{placeholderPreviewImage(150, 203)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}; float: left; margin-right: 3px;" />
+              <img ng-src="{{placeholderPreviewImage(150, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
+              <img ng-src="{{placeholderPreviewImage(300, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" /><br />
+              <img ng-src="{{placeholderPreviewImage(250, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
+              <img ng-src="{{placeholderPreviewImage(200, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
+
+              <br />
+              <b style="clear: both">Justeringer</b><br/>
+
+              <div id="filters">
+                <div ng-repeat="f in filters">
+                  <input type="range" min="{{f.min}}" max="{{f.max}}" step="0.1" ng-model="f.value" ng-dblclick="f.value = f.default">
+                  <label title="{{f._title}}">{{f.title}}</label> ({{f.value}}{{f.unit}})
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="tab-content" ng-class="{current: tab == 'websites'}">
+
+            <span ng-repeat="site in siteRules | sort:'title'">
+              <h3>{{site.title}}</h3>
+              <label class="contentTypeFilter" ng-repeat="cg in site.contentGroups | sort:'title'">
+                <input type="checkbox" ng-model="cg.enabled"> {{cg.title}}
+              </label>
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
 
       <p>
         <input type="button" id="saveButton" ng-click="save()" value="Lagre" />

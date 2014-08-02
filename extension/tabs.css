@@ -1,0 +1,80 @@
+/* based on http://jsfiddle.net/Us8uc/207/ */
+
+.tabs-menu
+{
+    position: absolute;
+    height: 30px;
+    clear: both;
+    padding: 0px;
+    display: block;
+    margin: 0px;
+}
+
+.tabs-menu li
+{
+    list-style-type: none;
+
+    height: 30px;
+    line-height: 30px;
+
+    float: left;
+
+    background-color: #eee;
+
+    margin-right: 10px;
+
+    border-top: 1px solid #999;
+    border-right: 1px solid #999;
+    border-left: 1px solid #999;
+    border-bottom: 1px solid red;
+
+    /* rounding */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.tabs-menu li.current
+{
+    position: relative;
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+    z-index: 5;
+    font-weight: bold;
+}
+
+.tabs-menu li a
+{
+    /*text-transform: uppercase;*/
+    padding: 10px;
+    color: #000;
+    text-decoration: none;
+}
+
+.tabs-menu .current a
+{
+    color: #000;
+}
+
+.tab
+{
+    position: relative;
+    top: 31px;
+    margin-bottom: 40px;
+    border: 1px solid #999;
+    background-color: #fff;
+    clear: both;
+    width: auto;
+}
+
+.tab-content
+{
+    width: auto; /* 460px; */
+    padding: 20px;
+    display: none;
+    overflow: hidden;
+}
+
+.tab-content.current
+{
+    display: block;
+}

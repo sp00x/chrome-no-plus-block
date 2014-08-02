@@ -22,20 +22,23 @@
     	// monkey-patch the defaults if the settings haven't been saved yet
     	if (!values || !values.siteRules)
     	{
-	      for (var i=0; siteRules.length>i; i++)
-	        for (var j=0; siteRules[i].contentGroups.length>j; j++)
+	      for (var i=0; defaultSiteRules.length>i; i++)
+	        for (var j=0; defaultSiteRules[i].contentGroups.length>j; j++)
 	        {
-	          var g = siteRules[i].contentGroups[j];
+	          var g = defaultSiteRules[i].contentGroups[j];
 	          g.enabled = (g.default == null ? true : g.default);
 	        }
+	       values.siteRules = defaultSiteRules;
     	}
 
-    	process(values.options || {}, values.siteRules || siteRules);
+    	process(values.options || {}, values.siteRules);
     });
 
 	function process(options, siteRules)
 	{
 		var seen = {}; // a list of seen ids or whatever we've encountered and patched
+
+		applyFilterOptions(options);
 
 		console.group();
 
@@ -136,13 +139,12 @@
 					var m = options.replaceWith;
 					//if (m == "random") m = modes[Math.floor(Math.random() * modes.length)];
 
-					var imStyle = " style='-webkit-filter: saturate(70%) contrast(60%)'";
-
-					var color = match.contentGroup.color || (match.contentGroup.category != null ? defaultCategoryColors[match.contentGroup.category] : null) || "rgba(255,255,255,0.95)";
+					var color = match.contentGroup.color || (match.contentGroup.category != null ? defaultCategoryColors[match.contentGroup.category] : null) || "#ffffff"; // "rgba(255,255,255,0.95)";
 					match.contentGroup.color = color; // override from now on
 
 					if (m.match(/^place/))
 					{
+						// find the template
 						var u = "http://placekitten.com/{width}/{height}"; // just in case..
 						for (var z=0; replacementMethods.length>z; z++)
 							if (replacementMethods[z].id == m)
@@ -150,8 +152,14 @@
 								u = replacementMethods[z].imageTemplate;
 								break;
 							}
-						u = u.replace("{width}", p.clientWidth).replace("{height}", p.clientHeight);
-						div.innerHTML = "<img src='" + u + "' alt='" + blockText + "'" + imStyle + ">";
+
+						// replace parameters
+						u = u.replace("{width}", p.clientWidth)
+							.replace("{height}", p.clientHeight)
+							.replace("{color}", color.substring(1));
+
+						// inject
+						div.innerHTML = "<img src='" + u + "' alt='" + blockText + "' class='placeholderImage'>";
 					}
 					else if (m == "delete")
 					{
@@ -225,7 +233,6 @@
 
 		var host = document.location.hostname || "";
 		var path = document.location.pathname || "/";
-		//console.error("url is:", document.location)
 
 		//console.log(logPrefix, "Building cache..");
 
@@ -274,6 +281,9 @@ z-index: 4000;\
 padding: 0px;\
 margin: 0px;\
 overflow: hidden;\
+}\
+." + styleSelector + " img.placeholderImage {\
+	-webkit-filter: " + buildFilters() + ";\
 }\
 ." + styleSelector + " * {\
 	color: #000;\

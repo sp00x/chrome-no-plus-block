@@ -33,9 +33,21 @@ h3
 
 /* ****** details stats ****** */
 
-li { margin: 0px; white-space: nowrap; }
+#list
+{
+  padding-left: 0px;
+}
 
-ul { list-style-type: none; margin: 0px; padding: 0px; }
+#list li
+{
+  list-style-type: none;
+}
+
+/*
+label
+{
+  white-space: nowrap;
+}*/
 
 .colorBox
 {
