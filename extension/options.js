@@ -49,7 +49,13 @@ var app = angular.module('optionsApp', [])
 
     $scope.addSite = function()
     {
-      $scope.siteRules.push({ id: makeId(), title: 'Untitled site', host: '(^|\\.)(example|xmpl)\.org$', contentGroups: [] })
+      $scope.siteRules.push({
+        id: makeId(),
+        title: 'New site',
+        host: '(^|\\.)(example|xmpl)\\.org$',
+        parentSelector: '\\b(xx1yy1zz1|yy1xx1bb1)\\b',
+        injectCSS: 'width: 100%;\nheight: 100%;\nposition: absolute;\nleft: 0px;\ntop: 0px;',
+        contentGroups: [ ] })
     }
 
     $scope.deleteRule = function(cg, rule)

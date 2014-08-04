@@ -23,7 +23,7 @@ var categories =
 [
   {    
     id: '*',
-    title: 'Any',
+    title: 'Other',
     color: palette[0]
   },
   {
