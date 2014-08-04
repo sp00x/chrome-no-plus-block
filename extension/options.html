@@ -4,13 +4,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="common.css" />
     <link rel="stylesheet" type="text/css" href="tabs.css" />
-    <!-- angular -->
-    <script src="lib/angular.min.js" type="text/javascript"></script>    
-    <link rel="stylesheet" type="text/css" href="lib/angular-csp.css" />
-    <!--
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-csp.css" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js" type="text/javascript"></script>
-    -->
+    <link rel="stylesheet" type="text/css" href="lib/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/angular-csp.css" />
+    <script type="text/javascript" src="lib/js/angular.min.js" ></script>
+    <script type="text/javascript" src="lib/js/base64.js" ></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="options.js" type="text/javascript"></script>
     <style>
@@ -28,11 +25,15 @@
         <ul class="tabs-menu">
 
           <li ng-class="{current: tab == 'websites'}">
-            <a ng-click="tab = 'websites'">Nettsteder</a>
+            <a ng-click="tab = 'websites'">Web sites</a>
           </li>
 
           <li ng-class="{current: tab == 'replacement'}">
-            <a ng-click="tab = 'replacement'">Erstatning</a>
+            <a ng-click="tab = 'replacement'">Replacement</a>
+          </li>
+
+          <li ng-class="{current: tab == 'rules'}">
+            <a ng-click="tab = 'rules'">Rules (advanced)</a>
           </li>
 
         </ul>
@@ -41,7 +42,7 @@
 
           <div class="tab-content" ng-class="{current: tab == 'replacement'}">
 
-            <b>Erstatt innhold med..</b><br>
+            <b>Replace content with..</b><br>
 
             <label ng-repeat="repl in replacements">
               <input type="radio" name="replaceWith" value="{{repl.id}}" ng-model="options.replaceWith"> {{repl.title}}
@@ -50,7 +51,7 @@
             <div ng-show="isPlaceholderImage">
 
               <br>
-              <b>Forhåndsvisning (bildene vil variere)</b><br>
+              <b>Preview (pictures will vary)</b><br>
 
               <img ng-src="{{placeholderPreviewImage(150, 203)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}; float: left; margin-right: 3px;" />
               <img ng-src="{{placeholderPreviewImage(150, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
@@ -59,12 +60,12 @@
               <img ng-src="{{placeholderPreviewImage(200, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
 
               <br />
-              <b style="clear: both">Justeringer</b><br/>
+              <b style="clear: both">Adjustments</b><br/>
 
               <div id="filters">
                 <div ng-repeat="f in filters">
                   <input type="range" min="{{f.min}}" max="{{f.max}}" step="0.1" ng-model="f.value" ng-dblclick="f.value = f.default">
-                  <label title="{{f._title}}">{{f.title}}</label> ({{f.value}}{{f.unit}})
+                  <label>{{f.title}}</label> ({{f.value}}{{f.unit}})
                 </div>
               </div>
             </div>
@@ -79,6 +80,96 @@
                 <input type="checkbox" ng-model="cg.enabled"> {{cg.title}}
               </label>
             </span>
+ 
+          </div>
+
+          <div class="tab-content" ng-class="{current: tab == 'rules'}" id="rulesTab">
+
+            <details ng-repeat="site in siteRules track by $index">
+              <summary><b>{{site.title}}</b> ({{site.url}}) <a ng-click="deleteSite(site)" title="Delete"><i class="fa fa-trash-o"></i></a> <a ng-click="exportSite(site)" title="Export.."><i class="fa fa-sign-in"></i></a></summary>
+              <p>
+                <details open>
+                  <summary>General</summary>
+                  <p>
+                    <label>Title</label>
+                    <input type="text" ng-model="site.title" />
+
+                    <label>URL</label>
+                    <input type="text" ng-model="site.url" />
+
+                    <label>Host (regex)</label>
+                    <input type="text" ng-model="site.host" />
+
+                    <label>Path (regex)</label>
+                    <input type="text" ng-model="site.path" />
+
+                    <label>Parent selector (regex)</label>
+                    <input type="text" ng-model="site.parentSelector" />
+                  </p>
+                </details>
+                <details open>
+                  <summary>CSS</summary>
+                  <p>
+                    <label>CSS to inject</label>
+                    <textarea ng-model="site.injectCSS" cols="40" rows="4"></textarea>
+
+                    <label>Modifications of parent container</label>
+                    <label><input type="checkbox" ng-model="site.setRelativePositionOnParent"> set 'position: relative' style</label>
+                    <label><input type="checkbox" ng-model="site.overlaySize"> set width/height style to clientWidth/clientHeight</label>
+                  </p>
+                </details>
+                <details open>
+                  <summary>Content groups</summary>
+
+                  <details class="contentTypeFilter" ng-repeat="cg in site.contentGroups">
+
+                    <summary>{{cg.title}} <a ng-click="deleteContentGroup(site, cg)"><i class="fa fa-trash-o"></i></a></summary>
+
+                    <p>
+                      <label>Title</label>
+                      <input type="text" ng-model="cg.title" />
+
+                      <label>Category</label>
+                      <select ng-model="cg.category">
+                        <option ng-repeat="cat in categories" value="{{cat.id}}">{{cat.title}}</option>
+                      </select>
+
+                      <label>Rules</label>
+
+                      <table class="rules">
+                        <tr>
+                          <th>Rule </th>
+                          <th>Host (regex)</th>
+                          <th>Path (regex)</th>
+                          <th></th>
+                        </tr>
+                        <tr ng-repeat="rule in cg.rules">
+                          <td>{{$index + 1}}</h5>
+                          <td><input type="text" ng-model="rule.host" /></td>
+                          <td><input type="text" ng-model="rule.path" /></td>
+                          <td><a ng-click="deleteRule(cg, rule)"><i class="fa fa-trash-o"></i></a></td>
+                        </tr>
+                      </table>
+
+                      <p><a ng-click="addRule(cg)"><i class="fa fa-plus-circle"></i> Add rule..</a></p>
+
+                    </p>
+
+                  </details>
+
+                  <p><a ng-click="addContentGroup(site)"><i class="fa fa-plus-circle"></i> Add content group..</a></p>
+
+                </details>
+
+              </p>
+
+            </details>
+
+            <p>
+              <a ng-click="addSite()"><i class="fa fa-plus-circle"></i> Add site..</a><br />
+              <a ng-click="import()"><i class="fa fa-sign-in"></i> Import..</a><br />
+              
+            </p>
 
           </div>
 
@@ -87,12 +178,12 @@
       </div>
 
       <p>
-        <input type="button" id="saveButton" ng-click="save()" value="Lagre" />
-        <input type="button" id="resetSiteRulesButton" ng-click="resetSiteRules()" value="Nullstill" />
+        <input type="button" id="saveButton" ng-click="save()" value="Save" />
+        <input type="button" id="resetSiteRulesButton" ng-click="resetSiteRules()" value="Reset" />
       </p>
 
       <span ng-show="saved" id="saved">
-        Innstillingene er lagret!
+        Your settings have been saved!
       </span>
 
     </div>

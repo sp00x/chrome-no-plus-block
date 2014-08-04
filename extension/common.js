@@ -7,18 +7,62 @@ var palette =
 
 var replacementMethods =
 [
-  { id: 'default', title: 'Standardmelding' },
-  { id: 'empty', title: 'Tomrom' },
-  { id: 'placekitten', title: 'Katter', imageTemplate: 'http://placekitten.com/{width}/{height}' },
-  { id: 'placecreature', title: 'Dyr', imageTemplate: 'http://placecreature.com/{width}/{height}' },
-  { id: 'placebee', title: 'Bier', imageTemplate: 'http://placebee.co.uk/{width}x{height}' },
-  { id: 'placeskull', title: 'Hodeskaller', imageTemplate: 'http://placeskull.com/{width}/{height}/{color}' },
-  { id: 'placeboobs', title: 'Pupper', imageTemplate: 'http://worksafe.placeboobs.com/{width}/{height}' },
+  { id: 'empty', title: 'Empty overlay' },
+  { id: 'delete', title: 'Remove entirely'},
+  { id: 'placekitten', title: 'Kittens', imageTemplate: 'http://placekitten.com/{width}/{height}' },
+  { id: 'placecreature', title: 'Creatures', imageTemplate: 'http://placecreature.com/{width}/{height}' },
+  { id: 'placebee', title: 'Bees', imageTemplate: 'http://placebee.co.uk/{width}x{height}' },
+  { id: 'placeskull', title: 'Skulls', imageTemplate: 'http://placeskull.com/{width}/{height}/{color}' },
+  { id: 'placeboobs', title: 'Boobs', imageTemplate: 'http://worksafe.placeboobs.com/{width}/{height}' },
 //  { id: 'placelorempixel', title: 'Lorem pixel', imageTemplate: 'http://lorempixel.com/{width}/{height}' },
-  { id: 'placebeer', title: 'Øl', imageTemplate: 'http://beerhold.it/{width}/{height}' },
-  { id: 'placeholder', title: 'Generisk', imageTemplate: 'http://placehold.it/{width}x{height}' },
-  { id: 'delete', title: 'Fjern helt'}
+  { id: 'placebeer', title: 'Beer', imageTemplate: 'http://beerhold.it/{width}/{height}' },
+  { id: 'placeholder', title: 'Generic', imageTemplate: 'http://placehold.it/{width}x{height}' },
 ];
+
+var categories =
+[
+  {    
+    id: '*',
+    title: 'Any',
+    color: palette[0]
+  },
+  {
+    id: 'video',
+    title: 'Videos',
+    color: palette[1]
+  },
+  {
+    id: 'sports',
+    title: 'Sports',
+    color: palette[2]
+  },
+  {
+    id: 'food',
+    title: 'Food',
+    color: palette[3]
+  },
+  {
+    id: 'premium',
+    title: 'Premium',
+    color: palette[4]
+  },
+  {
+    id: 'fashion',
+    title: 'Fashion',
+    color: palette[5]
+  },
+  {
+    id: 'entertainment',
+    title: 'Entertainment',
+    color: palette[6]
+  },
+  {
+    id: 'lifestyle',
+    title: 'Lifestyle',
+    color: palette[7]
+  }
+]
+
 
 var defaultCategoryColors =
 {
@@ -34,15 +78,15 @@ var defaultCategoryColors =
 
 var cssImageFilters =
 [
-  { title: 'Metning', _title: "Saturation", filter: "saturate", min: 0, max: 400, unit: '%', default: 100 },
-  { title: 'Kontrast', _title: "Contrast", filter: "contrast", min: 0, max: 400, unit: '%', default: 100 },
-  { title: 'Lysstyrke', _title: "Brightness", filter: "brightness", min: 0, max: 200, unit: '%', default: 100 },
-  { title: 'Ugjennomsiktighet', _title: "Opacity", filter: "opacity", min: 0, max: 100, unit: '%', default: 100 },
-  { title: 'Invertering', _title: "Invert", filter: "invert", min: 0, max: 100, unit: '%', default: 0 },
-  { title: 'Gråskala', _title: "Grayscale", filter: "grayscale", min: 0, max: 100, default: 0, unit: '%' },
-  { title: 'Sepia', _title: "Sepia", filter: "sepia", min: 0, max: 100, default: 0, unit: '%' },
-  { title: 'Kulør', _title: "Hue", filter: "hue-rotate", min: 0, max: 360, unit: 'deg', default: 0 },
-  { title: 'Uskarphet', _title: "Blur", filter: "blur", min: 0, max: 5, unit: 'px', default: 0 },
+  { _title: 'Metning', title: "Saturation", filter: "saturate", min: 0, max: 400, unit: '%', default: 100 },
+  { _title: 'Kontrast', title: "Contrast", filter: "contrast", min: 0, max: 400, unit: '%', default: 100 },
+  { _title: 'Lysstyrke', title: "Brightness", filter: "brightness", min: 0, max: 200, unit: '%', default: 100 },
+  { _title: 'Ugjennomsiktighet', title: "Opacity", filter: "opacity", min: 0, max: 100, unit: '%', default: 100 },
+  { _title: 'Invertering', title: "Invert", filter: "invert", min: 0, max: 100, unit: '%', default: 0 },
+  { _title: 'Gråskala', title: "Grayscale", filter: "grayscale", min: 0, max: 100, default: 0, unit: '%' },
+  { _title: 'Sepia', title: "Sepia", filter: "sepia", min: 0, max: 100, default: 0, unit: '%' },
+  { _title: 'Kulør', title: "Hue", filter: "hue-rotate", min: 0, max: 360, unit: 'deg', default: 0 },
+  { _title: 'Uskarphet', title: "Blur", filter: "blur", min: 0, max: 5, unit: 'px', default: 0 },
 ]
 for (var i=0; cssImageFilters.length>i; i++) cssImageFilters[i].value = cssImageFilters[i].default;
 
@@ -77,6 +121,7 @@ var defaultSiteRules =
     host: '(^|\\.)vg\\.no$',
     parentSelector: '\\b(article-extract|article-extract-full)\\b',
     injectCSS: 'width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;',
+    url: 'http://www.vg.no',
     overlaySize: '',
     contentGroups:
     [

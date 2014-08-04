@@ -1,3 +1,8 @@
+function makeId()
+{
+  return "N-" + Date.now() + "-" + Math.floor(Math.random() * 0xFFFFFFFF);
+}
+
 var app = angular.module('optionsApp', [])
 
   .controller("AboutController", [ '$scope', function($scope)
@@ -5,9 +10,89 @@ var app = angular.module('optionsApp', [])
     $scope.manifest = chrome.runtime.getManifest();
   }])
 
-  .controller('OptionsController', ['$scope', function($scope)
+  .controller('OptionsController', ['$scope', '$rootScope', function($scope, $rootScope)
   {
     $scope.tab = 'websites';
+
+    $scope.addRule = function(cg)
+    {
+      cg.rules.push({ host: '', path: ''});
+    }
+
+    $scope.addContentGroup = function(site)
+    {
+      site.contentGroups.push({ id: makeId(), title: 'Untitled', category: '*', rules: [] })
+    }
+
+    $scope.import = function(data)
+    {
+      var data = data || prompt("Import site configuration:", "");
+      if (data != null && data.length > 0)
+      {
+        try
+        {
+          var json = Base64.decode(data);
+          var obj = JSON.parse(json);
+          if (obj.type == 'site')
+          {
+            $scope.siteRules.push(obj.data);
+          }
+          else throw new Error("Unknown type: '" + obj.type + "'")
+          
+        }
+        catch (e)
+        {
+          alert("ERROR: " + e)
+        }
+      }
+    }
+
+    $scope.addSite = function()
+    {
+      $scope.siteRules.push({ id: makeId(), title: 'Untitled site', host: '(^|\\.)(example|xmpl)\.org$', contentGroups: [] })
+    }
+
+    $scope.deleteRule = function(cg, rule)
+    {      
+      if (!(rule.host.trim() == rule.path.trim() == "") || confirm("Delete rule? (no undo)"))
+        cg.rules.splice(cg.rules.indexOf(rule), 1);
+    }
+
+    $scope.deleteContentGroup = function(site, cg)
+    {
+      if (confirm("Delete content group '" + cg.title + "'? (no undo)"))
+        site.contentGroups.splice(site.contentGroups.indexOf(cg), 1);
+    }
+
+    $scope.deleteSite = function(site)
+    {
+      if (confirm("Delete web site '" + site.title + "'? (no undo)"))
+        $scope.siteRules.splice($scope.siteRules.indexOf(site), 1);
+    }
+
+    function copyDeep(obj, filter)
+    {
+      if (typeof obj == 'object')
+      {
+        var o = {};
+        for (var i in obj)
+        {
+          if (!filter || !filter.test(i)) o[i] = copyDeep(obj[i], filter);
+        }
+        return o;
+      }
+      else
+        return obj;
+    }
+
+    $scope.exportSite = function(site)
+    {
+      prompt("Site configuration exported as:", Base64.encode(JSON.stringify({ type: 'site', data: copyDeep(site, /^\$\$/) })));
+    }
+
+    $rootScope.categories = categories;
+
+    $rootScope.selectedSite = "db";
 
     $scope.siteRules = {};    
     $scope.options = {};    
@@ -68,6 +153,8 @@ var app = angular.module('optionsApp', [])
 
     $scope.resetSiteRules = function()
     {
+      if (!confirm("This will reset all site rules to the factory defaults. Are you sure you really want to do this?")) return;
+
       for (var i=0; defaultSiteRules.length>i; i++)
         for (var j=0; defaultSiteRules[i].contentGroups.length>j; j++)
         {

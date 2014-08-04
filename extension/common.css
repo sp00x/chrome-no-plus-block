@@ -118,13 +118,18 @@ label
 
 a
 {
-  color: black;
+  color: #666;
   text-decoration: none;
+  border-bottom: 1px dotted #999;
 }
 
 a:hover
 {
+  /*
   color: #666;
+  border-bottom-style: none;
+  background-color: #eee;
+  */
 }
 
 .optsImage
@@ -135,4 +140,63 @@ a:hover
   filter: saturate(0);
   -webkit-filter: saturate(0.5);
   */
+}
+
+#rulesTab label
+{
+  margin-top: 8px;
+  display: block;
+}
+
+#rulesTab input[type=text], #rulesTab textarea
+{
+  width: 100%;
+}
+
+#rulesTab textarea
+{
+  max-width: 100%;
+  min-width: 100%;
+}
+
+table.rules
+{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.rules th
+{
+  text-align: left;
+}
+
+table.rules tr
+{
+  width: 100%;
+}
+
+#rulesTab details summary
+{
+  /* font-weight: bold; */
+}
+
+#rulesTab details > details > summary
+{
+  border-bottom: solid 1px #999;
+}
+
+#rulesTab > details[open]
+{
+
+}
+
+#rulesTab p
+{
+  margin-bottom: 10px;
+}
+
+#rulesTab details > details
+{
+  margin-top: 10px;
+  margin-left: 10px;
 }

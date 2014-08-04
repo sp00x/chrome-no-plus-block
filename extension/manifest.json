@@ -1,13 +1,17 @@
 {
   "manifest_version": 2,
 
-  "name": ".no Plus Block",
-  "description": "Blokkér VG+, DB+ og annet tull og vås fra norske avisforsider",
-  "version": "1.0.4",
+  "name": "Article category blocker",
+
+  "description": "Block front page articles by category type",
+
+  "version": "1.0.5",
+
   "icons":
   {
     "32": "img/1406848496_icon-ios7-trash-outline.png"
   },
+
   "author":
   [
     {
@@ -20,11 +24,8 @@
 
   "permissions":
   [
-    "*://*.vg.no/",
-    "*://*.db.no/",
-    "*://*.nrk.no/",
-    "*://*.tv2.no/",
-    "*://*.dagbladet.no/",
+    "http://*/*",
+    "https://*/*",
     "storage"
   ],
 
@@ -33,11 +34,8 @@
     {
       "matches":
       [
-        "*://*.db.no/",
-        "*://*.dagbladet.no/",
-        "*://*.vg.no/",
-        "*://*.nrk.no/",
-        "*://*.tv2.no/"
+        "http://*/*",
+        "https://*/*"
       ],
       "js": [ "common.js", "content_script.js" ],
       "run_at": "document_idle",
