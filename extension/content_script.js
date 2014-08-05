@@ -1,6 +1,6 @@
 (function()
 {
-	console.log("############ content_script.js ############");
+	log.debug("############ content_script.js ############");
 
 	var logPrefix = "+BLOCK: "
 	var blockIdPrefix = "plusblockoverlay_";
@@ -44,7 +44,7 @@
 		// apply CSS image filter options
 		applyFilterOptions(options);
 
-		console.group();
+		log.group();
 
 		try
 		{
@@ -199,7 +199,7 @@
 				}
 				catch (e)
 				{
-					console.error("oops: %o, %o", e, a);
+					log.error(logPrefix, "oops: %o, %o", e, a);
 				}
 			}
 
@@ -231,11 +231,11 @@
 		}
 		catch (e)
 		{
-			console.error("ERROR:", e)
+			log.error("ERROR:", e)
 		}
 		finally
 		{
-			console.groupEnd();
+			log.groupEnd();
 		}
 	}
 

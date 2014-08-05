@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="detailsApp" ng-csp>
   <head>
     <link rel="stylesheet" type="text/css" href="common.css" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="lib/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/angular-csp.css" />
+    <script type="text/javascript" src="lib/js/angular.min.js" ></script>
     <script src="common.js" type="text/javascript"></script>
     <script src="details.js" type="text/javascript"></script>  
     <style>
-      body { min-width: 300px;}
+      body { min-width: 300px; }
     </style>
   </head>
   <body>
-    <div id="header">
-      <img src="img/1406922645_icon-ios7-trash-outline.png" id="logo" />
-      <span id="title">Article category blocker</span>
-      <span id="subtitle">Block front page articles by category type</span>
-    </div>
-    <div id="stats">
-      <p><b>Blocked articles, by category:</b></p>
-      <ul id="list">
+
+    <ng-include src="'partials/header.html'"></ng-include>
+
+    <div id="stats" ng-controller="DetailsController">
+      <p>
+        <b>Blocked articles, by category:</b>
+      </p>
+      <ul id="list" ng-hide="count == 0">
+        <li ng-repeat="g in stats">
+          <span class="colorBox" style="background-color: {{g.color}}"></span> {{g.title}}: {{g.count}}
+        </li>
       </ul>
     </div>
+
     <div id="opts">
-      <a href="options.html" class="optsImage" target="_blank"><img src="img/settings.png" border="0" class="optsImage"> Options</a><br />
-      <a href="about.html" class="optsImage"><img src="img/information.png" border="0" class="optsImage"> About</a><br />
+      <a href="options.html" target="_blank"><i class="fa fa-cogs"></i>Options</a><br />
+      <a href="about.html"><i class="fa fa-info"></i>About</a>
     </div>
+
   </body>
 </html>

@@ -1,4 +1,4 @@
-console.log("############# background.js #############");
+//console.log("############# background.js #############");
 
 chrome.runtime.onMessage.addListener(onMessage);
 //chrome.pageAction.onClicked.addListener(onClickPageAction);

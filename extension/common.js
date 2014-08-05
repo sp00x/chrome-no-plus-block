@@ -1,4 +1,16 @@
-console.log("######## common.js ########");
+var logPrefix = "[" + chrome.runtime.getManifest().name + "]";
+
+var log =
+{
+  group: function() {}, // console.group,
+  groupEnd: function() {}, // console.groupEnd,
+  debug: function() {}, // console.debug,
+  log: function() {}, // console.log,
+  info: function() {}, // console.info,
+  error: console.error,  
+}
+
+log.debug("######## common.js ########");
 
 var palette = 
 [

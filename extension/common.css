@@ -62,7 +62,7 @@ label
 
 #stats, #opts, #content
 {
-  padding: 8px 16px 8px 16px;
+  padding: 0px 16px 0px 16px;
   clear: both;
 }
 
@@ -107,20 +107,16 @@ label
 	font-size: 7pt;
 }
 
-#stats
-{
-  display: none;
-}
-
 #opts
 {
+  padding-bottom: 8px;
 }
 
 a
 {
-  color: #666;
-  text-decoration: none;
-  border-bottom: 1px dotted #999;
+  color: #333;
+  /*text-decoration: none;*/
+  /*border-bottom: 1px dotted #999;*/
 }
 
 a:hover
@@ -199,4 +195,38 @@ table.rules tr
 {
   margin-top: 10px;
   margin-left: 10px;
+}
+
+#opts i.fa
+{
+  width: 12px;
+  text-align: center;
+  margin-right: 8px;
+}
+
+#tabs-container
+{
+  margin-top: 16px;
+}
+
+input[type=button]
+{
+  width: 100px;
+  margin-right: 8px;
+}
+
+input[type=button]:hover
+{
+}
+
+.hint
+{
+  border-bottom: 1px dotted #999;
+  font-style: italic;
+}
+
+.tab-content > h3:first-of-type, .tab-content > span > h3:first-of-type
+{
+  margin-top: 0px;
+  padding-top: 0px;
 }

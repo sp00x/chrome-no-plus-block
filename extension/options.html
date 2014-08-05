@@ -25,15 +25,15 @@
         <ul class="tabs-menu">
 
           <li ng-class="{current: tab == 'websites'}">
-            <a ng-click="tab = 'websites'">Web sites</a>
+            <a ng-click="tab = 'websites'"><i class="fa fa-share-alt"></i> Web sites</a>
           </li>
 
           <li ng-class="{current: tab == 'replacement'}">
-            <a ng-click="tab = 'replacement'">Replacement</a>
+            <a ng-click="tab = 'replacement'"><i class="fa fa-image"></i> Replacement</a>
           </li>
 
           <li ng-class="{current: tab == 'rules'}">
-            <a ng-click="tab = 'rules'">Rules (advanced)</a>
+            <a ng-click="tab = 'rules'"><i class="fa fa-code"></i> Rules (advanced)</a>
           </li>
 
         </ul>
@@ -42,7 +42,7 @@
 
           <div class="tab-content" ng-class="{current: tab == 'replacement'}">
 
-            <b>Replace content with..</b><br>
+            <h3><i class="fa fa-paste"></i> Replace content with..</h3>
 
             <label ng-repeat="repl in replacements">
               <input type="radio" name="replaceWith" value="{{repl.id}}" ng-model="options.replaceWith"> {{repl.title}}
@@ -50,17 +50,15 @@
 
             <div ng-show="isPlaceholderImage">
 
-              <br>
-              <b>Preview (pictures will vary)</b><br>
+              <h3><i class="fa fa-puzzle-piece"></i> Preview (pictures will vary)</h3>
 
-              <img ng-src="{{placeholderPreviewImage(150, 203)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}; float: left; margin-right: 3px;" />
+              <img ng-src="{{placeholderPreviewImage(150, 205)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}; float: left; margin-right: 3px;" />
               <img ng-src="{{placeholderPreviewImage(150, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
               <img ng-src="{{placeholderPreviewImage(300, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" /><br />
               <img ng-src="{{placeholderPreviewImage(250, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
               <img ng-src="{{placeholderPreviewImage(200, 101)}}" class="placeholderPreview" style="filter: {{filtersCSS}}; -webkit-filter: {{filtersCSS}}" />
 
-              <br />
-              <b style="clear: both">Adjustments</b><br/>
+              <h3 style="clear: both"><i class="fa fa-adjust"></i> Adjustments</h3>
 
               <div id="filters">
                 <div ng-repeat="f in filters">
@@ -74,12 +72,25 @@
 
           <div class="tab-content" ng-class="{current: tab == 'websites'}">
 
+            <details ng-repeat="site in siteRules track by $index | sort:'title'" open>
+              <summary><b>{{site.title}}</b> ({{site.url}})</summary>
+              <p>
+                <label class="contentTypeFilter" ng-repeat="cg in site.contentGroups | sort:'title'">
+                  <input type="checkbox" ng-model="cg.enabled"> {{cg.title}}
+                </label>
+              </p>
+            </details>
+            
+            <!--
+
             <span ng-repeat="site in siteRules | sort:'title'">
               <h3>{{site.title}}</h3>
               <label class="contentTypeFilter" ng-repeat="cg in site.contentGroups | sort:'title'">
                 <input type="checkbox" ng-model="cg.enabled"> {{cg.title}}
               </label>
             </span>
+
+          -->
  
           </div>
 
@@ -97,20 +108,21 @@
                     <label>URL</label>
                     <input type="text" ng-model="site.url" />
 
-                    <label>Host (regex)</label>
+                    <label>Host (regular expression)</label>
                     <input type="text" ng-model="site.host" />
 
-                    <label>Path (regex)</label>
+                    <label>Path (regular expression)</label>
                     <input type="text" ng-model="site.path" />
 
-                    <label>Parent selector (regex)</label>
-                    <input type="text" ng-model="site.parentSelector" />
                   </p>
                 </details>
                 <details open>
                   <summary>CSS</summary>
                   <p>
-                    <label>CSS to inject</label>
+                    <label>Selector to match parent containers against (regex)</label>
+                    <input type="text" ng-model="site.parentSelector" />
+
+                    <label>CSS/styles for overlay container</label>
                     <textarea ng-model="site.injectCSS" cols="40" rows="4"></textarea>
 
                     <label>Modifications of parent container</label>
@@ -139,8 +151,8 @@
                       <table class="rules">
                         <tr>
                           <th>Rule </th>
-                          <th>Host (regex)</th>
-                          <th>Path (regex)</th>
+                          <th>Host (regular expression)</th>
+                          <th>Path (regular expression)</th>
                           <th></th>
                         </tr>
                         <tr ng-repeat="rule in cg.rules">

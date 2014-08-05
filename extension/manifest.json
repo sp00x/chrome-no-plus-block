@@ -9,7 +9,10 @@
 
   "icons":
   {
-    "32": "img/1406848496_icon-ios7-trash-outline.png"
+    "16": "img/trash-16.png",
+    "32": "img/trash-32.png",
+    "64": "img/trash-64.png",
+    "128": "img/trash-128.png"
   },
 
   "author":
@@ -19,8 +22,6 @@
       "email": "plusblock.chrome@green.spoox.org"
     }    
   ],
-
-  "update_url": "https://github.com/sp00x/chrome-no-plus-block/blob/master/updates.xml?raw=true",
 
   "permissions":
   [
@@ -54,7 +55,7 @@
   
   "browser_action":
   {
-    "default_icon": "img/1406848496_icon-ios7-trash-outline.png",
+    "default_icon": "img/trash-32.png",
     "default_popup": "details.html"
   },
 
