@@ -1,0 +1,22 @@
+html, body
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+#close
+{
+	color: white;
+	background-color: black;
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	display: inline-block;
+	padding: 4px;
+	margin: 0px;
+}
+
+#close a
+{
+	color: white;
+}

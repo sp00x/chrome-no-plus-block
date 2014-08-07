@@ -18,8 +18,46 @@
 
     <ng-include src="'partials/header.html'"></ng-include>
 
-    <div id="content">
+    <div id="content" style="max-width: 600px">
 
+      <h1>Tutorial</h1>
+
+      <h2>Limitations, requirements and basic how-it-works</h2>
+
+      <p>It is important to understand that it may not be possible to use this extension with all sites, but if the web site you want to add follows the "standard recipe", it may be possible. Some basic understanding of HTML and CSS is probably required to pull this off.</p>
+
+      <p>Requirements/assumptions:</p>
+      <ol>
+        <li>Article links are <span class="code">&lt;a href=".."&gt;</span> HTML tags.</li>
+        <li>The categories of articles can be deduced from patterns in the links.</li>
+        <li>Article boxes are enclosed in an outer <span class="code">&lt;div&gt;</span> or some other HTML tag with an identifiable characteristic</li>
+      </ol>
+
+      <p>Basic how-it-works:</p>
+      <ol>
+        <li>The extension will inspect all links on a page (<span class="code">&lt;a&gt;</span> tags), and match them against the configured patterns.</li>
+        <li>For each matching link, the HTML DOM will be traversed upwards via the parent containers to find the "envelope" - the <span class="code">&lt;div&gt;</span> HTML tag or whatever represents the "article box".</li>
+        <li>Once a matching parent container has been found, depending on the replacement configuration, one or more things may happen:
+          <ol>
+            <li>An overlay <span class="code">&lt;div&gt;</span> element will be inserted into the container</li>
+            <li>The CSS/style of the parent container may be modified, if required</li>
+          </ol>
+        </li>
+      </ol>
+
+      <p>Depending on how the website in question is structured, this generic approach may or may not work.</p>
+
+      <h2>Example</h2>
+
+      <p>As an example, take Norwegian online newspaper <b>adressa.no</b> (randomly chosen). Their front page looks something like this:</p>
+      <img />
+      <ol>
+        <li>Go to the webpage: www.adressa.no</li>
+        <li>Open up the "inspector" developer tools: Ctrl-Shift-C (Windows/Linux) or Cmd-Opt-C (Mac)</li>
+        <li> 
+      </ol>
+      <p> </p>
+ 
     </div>
 
   </body>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html ng-app="assistantApp" ng-csp>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="lib/js/angular.min.js" type="text/javascript"></script>    
+    <link rel="stylesheet" type="text/css" href="lib/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/angular-csp.css" />
+    <script src="common.js" type="text/javascript"></script> 
+    <script src="assistant.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="common.css" />
+    <style>
+      body { min-width: 500px;}
+    </style>
+  </head>
+
+  <body ng-controller="AssistantController">
+
+    <ng-include src="'partials/header.html'"></ng-include>
+
+    <div id="content">
+
+    	<h3>Add link..</h3>
+
+	    <label>URL</label>
+	    <input type="text" ng-model="url" />
+
+	    <label>Host</label>
+	    <input type="text" ng-model="host" />
+
+	    <label>Path</label>
+	    <input type="text" ng-model="path" />
+
+	    <h4>Parent DOM nodes</h4>
+
+	    <ol>
+	    	<li ng-repeat="n in nodes">
+	    		<a class="code astDomNode" ng-click="click(n)" ng-mouseover="hover(n)" ng-mouseout="hover()">&lt;{{n.name}} id="{{n.id}}" class="{{n.class}}" .. &gt;</a>
+	    	</li>
+	    </ol>
+
+	    <p>Ok?</p>
+
+	</div>
+
+  </body>
+</html>

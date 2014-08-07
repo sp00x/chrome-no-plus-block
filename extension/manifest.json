@@ -27,7 +27,8 @@
   [
     "http://*/*",
     "https://*/*",
-    "storage"
+    "storage",
+    "contextMenus"
   ],
 
   "content_scripts":
@@ -38,7 +39,11 @@
         "http://*/*",
         "https://*/*"
       ],
-      "js": [ "common.js", "content_script.js" ],
+      "js":
+      [
+        "common.js",
+        "content_script.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
@@ -48,6 +53,7 @@
   {
     "scripts":
     [
+      "common.js",
       "background.js"
     ],
     "persistent": false

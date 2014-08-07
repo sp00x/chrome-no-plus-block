@@ -16,12 +16,12 @@ var app = angular.module('optionsApp', [])
 
     $scope.addRule = function(cg)
     {
-      cg.rules.push({ host: '', path: ''});
+      cg.rules.push({ host: '', path: '' });
     }
 
     $scope.addContentGroup = function(site)
     {
-      site.contentGroups.push({ id: makeId(), title: 'Untitled', category: '*', rules: [] })
+      site.contentGroups.push({ id: makeId(), title: 'Untitled', category: '*', rules: [], enabled: true })
     }
 
     $scope.import = function(data)
@@ -214,3 +214,10 @@ var app = angular.module('optionsApp', [])
     }
   })
 
+  .filter('json', function() // I gave up trying to get orderBy to work as expected..
+  {
+    return function(input, indent)
+    {
+      return (indent) ? JSON.stringify(input, null, indent) : JSON.stringify(input);
+    }
+  })

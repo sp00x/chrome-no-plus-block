@@ -1,3 +1,5 @@
+
+
 angular.module("detailsApp", [])
 
   .controller("AboutController", [ '$scope', function($scope)
@@ -27,34 +29,29 @@ angular.module("detailsApp", [])
 
 //prompt("", document.location);
 
-/*
-
-function init()
+function sendToContentScript(msg, cb)
 {
-  var query = document.location.search || "";
-  if (query && query.length>0) query = query.substring(1);
-  if (query != "")
-  {
-    var arg = JSON.parse(unescape(query));
-    var list = document.getElementById("list");
-
-    //arg.stats.sort(function(a,b) { return a.title.localeCompare(b.title) })
-    arg.stats.sort(function(a,b) { return b.count - a.count; })
-
-    for (var i=0; arg.stats.length>i; i++)
+  // find the current (active) tab
+  chrome.tabs.query(
     {
-      var li = document.createElement("li");
-      var g = arg.stats[i];
-      li.innerHTML = '<span class="colorBox" style="background-color: ' + g.color + '"></span>' + g.title + ": " + g.count;
-      list.appendChild(li);
+      active: true,
+      currentWindow: true
+    },
+    function tabsQueried(tabs)
+    {
+      // send the message to it
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        msg,
+        cb
+      );
     }
-
-    if (arg.count > 0)
-      document.getElementById("stats").style.display = "block";
-
-  }
+  );
 }
 
-document.addEventListener("DOMContentLoaded", init, false );
-
-*/
+document.addEventListener("DOMContentLoaded",
+  function domContentLoaded()
+  {
+    document.getElementById("blockedHeader").onclick = function() { sendToContentScript({ type: 'popup-assist' }) };
+  },
+  false );
