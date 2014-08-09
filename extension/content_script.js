@@ -1,25 +1,271 @@
 log.debug("############ content_script.js ############");
 
-var lastMenuElement = null;
+var logPrefix = "+BLOCK: "
+var blockIdPrefix = "plusblockoverlay_";
+var blockedCount = 0;
+var blockedStats = {};
 
-// hook context menu event to keep track of which element is being right-clicked
+var cssInjected = false;
+
+var blockText = "Content blocked\nForYourOwnGood&trade;";
+var imageData = "data:image/png;base64,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";
+
+// randomize selector so it can't be easily counter-blocked
+var styleSelector = "plusblockoverlay" + Math.floor(Math.random() * 0xFFFFFFFF);
+
+// keep track of which link was last pressed, since that is not available to the
+// menu click handler in the background script
+var lastContextMenuElement = null;
 document.addEventListener("contextmenu", function(e)
 {
-	//console.log("-- contextmenu: %o", e.srcElement)
-	lastMenuElement = e.srcElement;
-})
+	lastContextMenuElement = e.srcElement;
+});
+
+
+function getXPath(element, preferId)
+{
+	preferId = (preferId == null) ? true : preferId;
+
+    if (preferId && element.id!=='')
+        return 'id("'+element.id+'")';
+
+    if (element === document.body)
+        return element.tagName;
+
+    var ix = 0;
+    var siblings = element.parentNode.childNodes;
+    for (var i = 0; i < siblings.length; i++)
+    {
+        var sibling = siblings[i];
+        if (sibling === element)
+            return getXPath(element.parentNode, preferId) + '/' + element.tagName + '[' + (ix+1) + ']';
+        if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
+            ix++;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// website add assistant
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var astCart = null;
+var astEventListenersAdded = false;
+var astKnownNodes = [];
+var astPreviousPreviewNode = null;
+var astPreviousPreviewClass = null;
+var astStyleElement = null;
+
+
+function astCheckEvent(e, eventName)
+{
+	try
+	{
+		//console.log(eventName, e)
+
+		if (astCart == null) return true;
+
+		var p = e.srcElement;
+
+		var found = false;
+		while (p != null && p !== document.body)
+		{
+			if (p.nodeType == 1 && p.nodeName.toLowerCase() == 'a')
+			{
+				// found the link
+				found = true;
+				break;
+			}
+			p = p.parentNode;
+		}
+
+		//console.log("found?", found, p)
+
+		var added = false;
+
+		if (found)
+		{
+			var url = p.href;
+			var dupe = false;
+			for (var i=0; astCart.length>i; i++) if (astCart[i].url == url)
+			{	
+				dupe = true;
+				break;
+			}
+			if (!dupe)
+			{
+				added = true;
+				astCart.push({ element: p, url: url });
+			}
+		}
+
+		if (added)
+			chrome.runtime.sendMessage({ type: 'siteAddAssistUpdate', count: astCart.length }, function() { });
+
+	    e.preventDefault();
+	    e.stopPropagation();
+	    return false;
+	} catch (e)
+	{
+		alert(e)
+	}
+}
+
+function startSiteAddAssistant(msg, sender, callback)
+{
+	console.log("Starting site-add assistant")
+	if (astCart == null) astCart = []; // new cart
+
+	if (!astEventListenersAdded)
+	{
+		console.log("Adding event listeners");
+		document.addEventListener("click", function(e) { return astCheckEvent(e, 'click') });
+		eventListenersAdded = true;
+	}
+
+	// display the fixed element to call attention to the badge button
+	showAssistantPopup('Click any article links on the page, then press the [icon] badge to process..')
+	chrome.runtime.sendMessage({ type: 'siteAddAssistUpdate', count: astCart.length }, function() { });
+
+	// callback
+	if (callback && typeof callback == 'function') callback();
+}
+
+function endSiteAddAssistant(msg, sender, callback)
+{
+	// leave the event handler, but remove the hook
+	astCart = null;
+
+	// hide the injected overlay
+	hideAssistantPopup();
+
+	// callback
+	if (callback && typeof callback == 'function') callback();
+}
+
+function previewSiteAddAssistant(msg, sender, callback)
+{
+	var previewCSS = "{ opacity: 0.25; background-color: red; }";
+
+	var styles = msg.styles || [];
+	var nodeId = msg.nodeId || null;
+
+	if (astStyleElement == null)
+	{
+		astStyleElement = document.createElement('style');
+		document.body.appendChild(astStyleElement);
+	}
+
+	var css = "";
+
+	if (styles.length > 0) css += styles.map(function(s) { return "." + s }).join(", ") + " " + previewCSS + "\n";
+
+	if (astPreviousPreviewNode != null)
+	{
+		astPreviousPreviewNode.className = astPreviousPreviewClass;
+	}
+
+	if (nodeId != null)
+	{
+		css += "." + styleSelector + "PREVIEW" + " " + previewCSS + "\n";
+		astPreviousPreviewNode = astKnownNodes[nodeId];
+		console.log("new preview node:", nodeId, astPreviousPreviewNode, astKnownNodes)
+		astPreviousPreviewClass = astPreviousPreviewNode.className;
+		astPreviousPreviewNode.className = ((astPreviousPreviewClass || "") + ' ' + styleSelector + "PREVIEW");
+	}
+
+	console.log("preview CSS = " + css);
+	astStyleElement.innerHTML = css;
+}
+
+function querySiteAddAssistant(msg, sender, callback)
+{
+	var cart = [];
+
+	// since nodes don't have any unique IDs, we'll just have
+	// to keep track of them all in an array (We could of course have used XPath...)
+	astKnownNodes = []; // clear
+	var nodeInfos = [];
+
+	for (var i=0; astCart.length>i; i++)
+	{
+		var p = astCart[i].element;
+		var info = [];
+		while (p != null && p !== document && p != document.body)
+		{
+			var nodeId = astKnownNodes.indexOf(p);
+			if (nodeId == -1)
+			{				
+				nodeId = astKnownNodes.length;
+				astKnownNodes.push(p);
+				nodeInfos.push({ id: nodeId, count: 0, node: p, xpath: getXPath(p, true) });
+			}
+			nodeInfos[nodeId].count++;
+
+			var attrs = {};
+			for (var j=0; p.attributes.length>j; j++) attrs[p.attributes.item(j).name.toLowerCase()] = p.attributes.item(j).value;
+			info.push({ name: p.nodeName.toLowerCase(), attrs: attrs, id: nodeId, xpath: nodeInfos[nodeId].xpath });
+			p = p.parentNode; 
+		}
+		cart.push({ url: astCart[i].url, nodes: info });
+	}
+
+	// any node that occurs more than one time is not a candidate.. (unless there's box/row containers we want to remove?)
+	nodeInfos.sort(function(a, b) { return b.count - a.count }); // descending count
+	console.log("nodes:", nodeInfos)
+
+	// filter the ones that occur mot than once
+	var dupes = [];
+	for (var i=0; nodeInfos.length>i; i++)
+		if (nodeInfos[i].count > 1) dupes.push(nodeInfos[i].id);
+
+	console.log("dupes:", dupes);
+
+	// remove dupes from hierarchies
+	for (var i=0; cart.length>i; i++)
+	{
+		for (var j=0; cart[i].nodes.length>j; j++)
+		{
+			// first dupe marks end of chain
+			if (dupes.indexOf(cart[i].nodes[j].id) >= 0)
+			{
+				// mark as dupe
+				cart[i].nodes[j].shared = true;
+
+				//// chop off remainder
+				//cart[i].nodes.splice(j);
+				//break;
+			}
+		}
+	}
+	console.log("sending", cart);
+
+	callback(cart);
+}
+
+//startSiteAddAssistant();
 
 //chrome.runtime.sendMessage({ type: 'assist'	}, function() { });
 
-var astInfo = null;
-
+// "shopping cart" for assistant
 var prevHover = null;
+
+var messageHandlers =
+{
+	'startSiteAddAssistant': startSiteAddAssistant,
+	'endSiteAddAssistant': endSiteAddAssistant,
+	'querySiteAddAssistant': querySiteAddAssistant,
+	'previewSiteAddAssistant': previewSiteAddAssistant
+}
 
 // handle messages from background script and popup
 chrome.runtime.onMessage.addListener(function(msg, sender, callback)
 {
-	console.log("onMessage: msg: %o, sender: %o, el: %o", msg, sender, lastMenuElement);
+	console.log("onMessage: msg: %o, sender: %o", msg, sender);
+	var handler = messageHandlers[msg.type];
+	if (handler != null) handler(msg, sender, callback);
+});
 
+/*
 	var tabId = sender.tab && sender.tab.id ? sender.tab.id : msg.tabId;
 
 	if (msg.type == 'hideAssistant')
@@ -81,43 +327,22 @@ chrome.runtime.onMessage.addListener(function(msg, sender, callback)
 			callback(info);
 		}
 	}
-	else if (msg.type == 'addAssistant')
-	{
-		console.log("calling for assistant..")
-		chrome.runtime.sendMessage({ type: 'assist' }, function() { });
-
-		var e = injectAssist();
-		e.innerHTML = "^^ Click the badge icon/button up here somewhere..";
-		e.style.display = 'block';
-		setTimeout(function()
-		{
-			e.style.display = "none";
-		}, 4000);
-
-		/*
-		e.yo = function()
-		{
-			console.log("yo ?")
-		}
-		var u = chrome.extension.getURL('assistant.html') + "?" + escape(JSON.stringify({tabId: 0}));
-		e.src = u;
-		e.style.display = 'block';
-		*/
-	}
 });
+*/
 
-var logPrefix = "+BLOCK: "
-var blockIdPrefix = "plusblockoverlay_";
-var blockedCount = 0;
-var blockedStats = {};
+function showAssistantPopup(msg, timeout)
+{
+	var e = injectAssist();
+	e.innerHTML = msg;
+	e.style.display = 'block';		
+	if (timeout && timeout > 0)	setTimeout(hideAssistantPopup, timeout);
+}
 
-var cssInjected = false;
-
-var blockText = "Content blocked\nForYourOwnGood&trade;";
-var imageData = "data:image/png;base64,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";
-
-// randomize selector so it can't be easily counter-blocked
-var styleSelector = "plusblockoverlay" + Math.floor(Math.random() * 0xFFFFFFFF);
+function hideAssistantPopup()
+{
+	var e = injectAssist();
+	e.style.display = "none";
+}
 
 chrome.storage.local.get(function(values)
 {
@@ -397,7 +622,7 @@ function injectAssist()
 		var id = styleSelector + '_assist';
 		var el = document.createElement("div");
 		el.id = id;
-		el.setAttribute("style", "position: fixed; left: 0px; top: 0px; right: 0px; z-index: 99999; height: auto; display: none; color: #fff; font-weight: bold; background-color: #000; padding: 8px; margin: 0px; text-align: right;");
+		el.setAttribute("style", "position: fixed; left: 0px; top: 0px; right: 0px; z-index: 2147483647; height: auto; display: none; color: #fff; font-weight: bold; background-color: #000; padding: 8px; margin: 0px; text-align: right; font-size: 10pt; font-family: Arial;");
 		document.body.appendChild(el);
 
 		assistEl = el;

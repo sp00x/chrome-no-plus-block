@@ -20,6 +20,48 @@
 
     <div id="content">
 
+      <h3>Candidate CSS selectors</h3>
+
+      <p>
+        <label><input type="radio" name="selectorType" value="" ng-model="selectorFilter.shared" />all</label>
+        <label><input type="radio" name="selectorType" value="true" ng-model="selectorFilter.shared" />only common</label>
+      </p>
+      <p>
+        <span ng-repeat="s in styles | filter:selectorFilter">
+          <!--<span ng-if="$index > 0"> | </span>-->
+          <label class="astSelector" ng-class="{selectorPresent: s.present}"><input type="checkbox" ng-model="s.selected" />
+          {{s.name}}</label>
+        </span>
+      </p>
+
+      <span ng-show="hideNodes == true"><a href="#" ng-click="hideNodes = false">show node details</a></span>
+
+      <div ng-hide="hideNodes == true">
+        <a href="#" ng-click="hideNodes = true">hide node details</a>
+
+        <h3>Node<!-- <a style="float: right" ng-click="removeLink(nodes[nodeIndex])"><i class="fa fa-trash-o"></i></a> --></h3>
+       
+        <select ng-model="nodeIndex">
+          <option ng-repeat="n in nodes" value="{{$index}}">{{n.url}}</option>
+        </select>
+
+        <h3 style="clear: both">Node hierarchy</h3>
+        <ol>
+          <li ng-repeat="n in nodes[nodeIndex].nodes" ng-hide="n.shared &amp;&amp; excludeCommonNodes">
+            <a class="astNode" ngclick="clickNode(nodes[nodeIndex], n)" ng-mouseenter="hoverNode(nodes[nodeIndex], n)" ng-mouseleave="hoverNode()">{{n.name}}
+              <span ng-show="showSelectors" ng-repeat="(k, s) in n.styles" class="astNodeSelector"><span ng-if="$index > 0"> | </span>{{k}}</span>
+              <span style="xpath" ng-show="showXPath"><br />{{n.xpath}}</span></a>
+          </li>
+        </ol>
+        <p>
+          <label><input type="checkbox" ng-model="excludeCommonNodes" /> exclude common parent nodes</label><br />
+          <label><input type="checkbox" ng-model="showSelectors" /> show selectors</label><br />
+          <label><input type="checkbox" ng-model="showXPath" /> show Xpath</label><br />
+        </p>
+      </div>
+
+<!--
+
     	<h3>Add link..</h3>
 
 	    <label>URL</label>
@@ -30,16 +72,7 @@
 
 	    <label>Path</label>
 	    <input type="text" ng-model="path" />
-
-	    <h4>Parent DOM nodes</h4>
-
-	    <ol>
-	    	<li ng-repeat="n in nodes">
-	    		<a class="code astDomNode" ng-click="click(n)" ng-mouseover="hover(n)" ng-mouseout="hover()">&lt;{{n.name}} id="{{n.id}}" class="{{n.class}}" .. &gt;</a>
-	    	</li>
-	    </ol>
-
-	    <p>Ok?</p>
+-->
 
 	</div>
 

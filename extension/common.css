@@ -242,5 +242,25 @@ input[type=button]:hover
 
 .astDomNode:hover
 {
-  background-color: red;
+  background-color: black;
+  color: white;
+}
+
+.astSelector
+{
+}
+
+.astSelector:hover, .selectorPresent, .astNode:hover
+{
+  background-color: #ccc;
+}
+
+.astNode
+{
+
+}
+
+.astNodeSelector
+{
+  color: #999;
 }

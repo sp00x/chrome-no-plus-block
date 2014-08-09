@@ -25,6 +25,14 @@ angular.module("detailsApp", [])
       $scope.stats = arg.stats;
     }
     console.log($scope.stats);
+
+    $scope.addSite = function()
+    {
+      sendToContentScript({ type: "startSiteAddAssistant" }, function ready()
+      {
+        window.close();
+      })
+    }
   }])
 
 //prompt("", document.location);

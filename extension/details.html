@@ -12,24 +12,27 @@
       body { min-width: 300px; }
     </style>
   </head>
-  <body>
+  <body ng-controller="DetailsController">
 
     <ng-include src="'partials/header.html'"></ng-include>
 
-    <div id="stats" ng-controller="DetailsController">
-      <p>
-        <b id="blockedHeader">Blocked articles, by category:</b>
-      </p>
-      <ul id="list" ng-hide="count == 0">
-        <li ng-repeat="g in stats">
-          <span class="colorBox" style="background-color: {{g.color}}"></span> {{g.title}}: {{g.count}}
-        </li>
-      </ul>
+    <div id="stats">
+      <span ng-hide="count == 0">
+        <p>
+          <b id="blockedHeader">Blocked articles, by category:</b>
+        </p>
+        <ul id="list">
+          <li ng-repeat="g in stats">
+            <span class="colorBox" style="background-color: {{g.color}}"></span> {{g.title}}: {{g.count}}
+          </li>
+        </ul>
+      </span>
     </div>
 
     <div id="opts">
       <a href="options.html" target="_blank"><i class="fa fa-cogs"></i>Options</a><br />
-      <a href="about.html"><i class="fa fa-info"></i>About</a>
+      <a href="about.html"><i class="fa fa-info"></i>About</a><br />
+      <a href="#" ng-click="addSite()"><i class="fa fa-plus-circle"></i>Add website..</a>
     </div>
 
   </body>
