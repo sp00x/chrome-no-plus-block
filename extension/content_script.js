@@ -21,7 +21,6 @@ document.addEventListener("contextmenu", function(e)
 	lastContextMenuElement = e.srcElement;
 });
 
-
 function getXPath(element, preferId)
 {
 	preferId = (preferId == null) ? true : preferId;
@@ -44,6 +43,21 @@ function getXPath(element, preferId)
     }
 }
 
+function loadExtensionResource(url, callback)
+{
+	var req = new XMLHttpRequest();
+	req.onload = function(e)
+	{
+		callback(null, req.status, req.responseText);
+	}
+	req.onerror = function(e)
+	{
+		callback(e, req.status, req.responseText);
+	}
+	req.open("GET", chrome.extension.getURL(url), true);
+	req.send();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //// website add assistant
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +69,128 @@ var astPreviousPreviewNode = null;
 var astPreviousPreviewClass = null;
 var astStyleElement = null;
 
+// since there is no way of capturing the onclose/onbeforeclose event in
+// the popup, create a port here, and listen for it to disconenct..
+chrome.runtime.onConnect.addListener(function(port)
+{
+	console.log("port connected:", port, port.name)
+
+	if (port.name == "siteAddAssistant")
+	{
+		port.onDisconnect.addListener(function()
+		{
+			console.log("port disconnected:", port)
+			endSiteAddAssistant({}, {})
+		})
+	}
+});
+
+/*
+astPort.onMessage.addListener(function(msg)
+{
+	console.log("port message: %o", msg)
+})
+
+/*
+astPort.onConnect.addListener(function(port)
+{
+	console.log("port connected: %o", port)
+})
+
+astPort.runtime.onDisconnect.addListener(function(port)
+{
+	console.log("port disconnected: %o", port)
+})
+*/
+
+this.Hello = function(x)
+{
+	console.log("hello", x)
+}
+
+function hashToCSS(obj)
+{
+	return Object.keys(obj).map(function(k) { return k + ': ' + obj[k] }).join("; ");
+}
+
+var astPanelEl = null;
+
+function astGetPanel()
+{
+	if (astPanelEl == null)
+	{
+		injectCSS('');
+
+		var el = document.createElement("div");
+		el.className = styleSelector + '_panel';
+
+		var iframe = document.createElement("iframe");
+		iframe.src = chrome.extension.getURL("/injected.html");
+		el.appendChild(iframe);
+
+//		var style = document.createElement("link");
+//		style.setAttribute("rel", "stylesheet");
+//		style.setAttribute("type", "text/css");
+//		style.setAttribute("href", chrome.extension.getURL("/injected.css"));
+//		document.body.appendChild(style);
+//
+//		var id = styleSelector + '_assist';
+//		var el = document.createElement("div");
+//		el.id = id;
+//		
+//		/*
+//
+//		el.setAttribute("style",
+//			hashToCSS(
+//			{
+//				'position': 'fixed',
+//				'left': '0px',
+//				'top': '0px',
+//				'right': '0px',
+//				'z-index': 2147483647,
+//				'height': '0px',
+//				'display': 'block',
+//				'color': '#fff',
+//				'font-weight': 'bold',
+//				'background-color': '#000',
+//				'padding': '8px',
+//				'margin': '0px',
+//				'text-align': 'right',
+//				'font-size': '10pt',
+//				'font-family': 'Arial',
+//				'transition': 'height 1s',
+//				'box-sizing': 'content-box',
+//				'overflow': 'hidden'
+//			}));
+//		*/
+//
+//		el.className = "articleCategoryBlocker_panel";
+
+		document.body.appendChild(el);
+
+		astPanelEl = el;
+	}
+	return astPanelEl;
+}
+
+function astShowPanel(msg, timeout)
+{
+	var el = astGetPanel();
+	//el.innerHTML = msg;
+	el.className = styleSelector + '_panel ' + styleSelector + '_panel_show';
+	//e.style.height = "auto";
+	//e.style.display = 'block';		
+	if (timeout && timeout > 0)	setTimeout(astHidePanel, timeout);
+}
+
+function astHidePanel()
+{
+	var el = astGetPanel();
+	el.className = styleSelector + '_panel';
+
+	//e.style.height = "0px";
+	//e.style.display = "none";
+}
 
 function astCheckEvent(e, eventName)
 {
@@ -123,7 +259,7 @@ function startSiteAddAssistant(msg, sender, callback)
 	}
 
 	// display the fixed element to call attention to the badge button
-	showAssistantPopup('Click any article links on the page, then press the [icon] badge to process..')
+	astShowPanel('Click any article links on the page, then press the [icon] badge to process..')
 	chrome.runtime.sendMessage({ type: 'siteAddAssistUpdate', count: astCart.length }, function() { });
 
 	// callback
@@ -136,7 +272,13 @@ function endSiteAddAssistant(msg, sender, callback)
 	astCart = null;
 
 	// hide the injected overlay
-	hideAssistantPopup();
+	astHidePanel();
+
+	// remove any injected preview styles
+	previewSiteAddAssistant({}, sender);
+
+	// make sure the badge is reset
+	chrome.runtime.sendMessage({ type: 'reset' })
 
 	// callback
 	if (callback && typeof callback == 'function') callback();
@@ -144,7 +286,15 @@ function endSiteAddAssistant(msg, sender, callback)
 
 function previewSiteAddAssistant(msg, sender, callback)
 {
-	var previewCSS = "{ opacity: 0.25; background-color: red; }";
+	var previewMethods = 
+	{
+		'display': "display: none;",
+		'visibility': "visibility: hidden;",
+		'overlay': "opacity: 0.25; background-color: red; z-index: 2147483647;",
+		'custom': msg.css || ""
+	}
+
+	var previewCSS = previewMethods[msg.method || "overlay"];
 
 	var styles = msg.styles || [];
 	var nodeId = msg.nodeId || null;
@@ -157,7 +307,7 @@ function previewSiteAddAssistant(msg, sender, callback)
 
 	var css = "";
 
-	if (styles.length > 0) css += styles.map(function(s) { return "." + s }).join(", ") + " " + previewCSS + "\n";
+	if (styles.length > 0) css += styles.map(function(s) { return "." + s }).join(", ") + "\n{" + previewCSS + "\n}\n";
 
 	if (astPreviousPreviewNode != null)
 	{
@@ -166,14 +316,14 @@ function previewSiteAddAssistant(msg, sender, callback)
 
 	if (nodeId != null)
 	{
-		css += "." + styleSelector + "PREVIEW" + " " + previewCSS + "\n";
+		css += "." + styleSelector + "PREVIEW" + " {\n" + previewCSS + "\n}\n";
 		astPreviousPreviewNode = astKnownNodes[nodeId];
-		console.log("new preview node:", nodeId, astPreviousPreviewNode, astKnownNodes)
+		//console.log("new preview node:", nodeId, astPreviousPreviewNode, astKnownNodes)
 		astPreviousPreviewClass = astPreviousPreviewNode.className;
 		astPreviousPreviewNode.className = ((astPreviousPreviewClass || "") + ' ' + styleSelector + "PREVIEW");
 	}
 
-	console.log("preview CSS = " + css);
+	//console.log("preview CSS = " + css);
 	astStyleElement.innerHTML = css;
 }
 
@@ -211,14 +361,14 @@ function querySiteAddAssistant(msg, sender, callback)
 
 	// any node that occurs more than one time is not a candidate.. (unless there's box/row containers we want to remove?)
 	nodeInfos.sort(function(a, b) { return b.count - a.count }); // descending count
-	console.log("nodes:", nodeInfos)
+	//console.log("nodes:", nodeInfos)
 
 	// filter the ones that occur mot than once
 	var dupes = [];
 	for (var i=0; nodeInfos.length>i; i++)
 		if (nodeInfos[i].count > 1) dupes.push(nodeInfos[i].id);
 
-	console.log("dupes:", dupes);
+	//console.log("dupes:", dupes);
 
 	// remove dupes from hierarchies
 	for (var i=0; cart.length>i; i++)
@@ -237,16 +387,13 @@ function querySiteAddAssistant(msg, sender, callback)
 			}
 		}
 	}
-	console.log("sending", cart);
+	//console.log("sending", cart);
 
 	callback(cart);
 }
 
-//startSiteAddAssistant();
+//setTimeout(startSiteAddAssistant, 1500);
 
-//chrome.runtime.sendMessage({ type: 'assist'	}, function() { });
-
-// "shopping cart" for assistant
 var prevHover = null;
 
 var messageHandlers =
@@ -265,103 +412,32 @@ chrome.runtime.onMessage.addListener(function(msg, sender, callback)
 	if (handler != null) handler(msg, sender, callback);
 });
 
-/*
-	var tabId = sender.tab && sender.tab.id ? sender.tab.id : msg.tabId;
+var styleTemplate = null;
 
-	if (msg.type == 'hideAssistant')
-	{
-		var e = injectAssist();
-		e.style.display = "none";
-	}
-	else if (msg.type == 'hoverAssistant')
-	{
-		var info = astInfo[msg.index];
-
-		if (prevHover != null)
-		{
-			prevHover.el.style.backgroundColor = prevHover.bg;
-			//prevHover.el.style.zIndex = prevHover.zi;
-			//prevHover.el.style.display = prevHover.d;
-			//prevHover.el.style.visibility = prevHover.v;
-			prevHover.el.style.opacity = prevHover.o;
-		}
-
-		if (msg.index >= 0)
-		{
-			console.log("hover: %s: %o", msg.index, info)
-
-			prevHover =
-			{
-				el: info.el,
-				bg: info.el.style.backgroundColor,
-				//zi: info.el.style.zIndex,
-				//d: info.el.style.display,
-				//v: info.el.style.visibility,
-				o: info.el.style.opacity
-			}
-
-			info.el.style.backgroundColor = "red";
-			//info.el.style.zIndex = 100000;
-			//info.el.style.display = "none";
-			//info.el.style.visibility = "hidden";
-			info.el.style.opacity = "0.15";
-		}
-		else
-		{
-			prevHover = null;
-		}
-	}
-	else if (msg.type == 'queryAssistant')
-	{
-		if (typeof callback == 'function')
-		{
-			astInfo = [];
-			var info = [];
-			var p = lastMenuElement;
-			while (p != null && p !== document && p != document.body)
-			{
-				astInfo.push({ id: p.id, name: p.nodeName, class: p.className, el: p });
-				info.push({ id: p.id, name: p.nodeName, class: p.className });
-				p = p.parentNode;
-			}
-			callback(info);
-		}
-	}
-});
-*/
-
-function showAssistantPopup(msg, timeout)
+loadExtensionResource('/inject.css', function(err, status, content)
 {
-	var e = injectAssist();
-	e.innerHTML = msg;
-	e.style.display = 'block';		
-	if (timeout && timeout > 0)	setTimeout(hideAssistantPopup, timeout);
-}
-
-function hideAssistantPopup()
-{
-	var e = injectAssist();
-	e.style.display = "none";
-}
-
-chrome.storage.local.get(function(values)
-{
-	//console.log(logPrefix, "Got values from storage: %o", values);
-
-	// monkey-patch the defaults if the settings haven't been saved yet
-	if (!values || !values.siteRules)
+	chrome.storage.local.get(function(values)
 	{
-      for (var i=0; defaultSiteRules.length>i; i++)
-        for (var j=0; defaultSiteRules[i].contentGroups.length>j; j++)
-        {
-          var g = defaultSiteRules[i].contentGroups[j];
-          g.enabled = (g.default == null ? true : g.default);
-        }
-       values.siteRules = defaultSiteRules;
-	}
+		styleTemplate = content;
+		//console.log("template = " + content)
 
-	process(values.options || {}, values.siteRules);
-});
+		//console.log(logPrefix, "Got values from storage: %o", values);
+
+		// monkey-patch the defaults if the settings haven't been saved yet
+		if (!values || !values.siteRules)
+		{
+	      for (var i=0; defaultSiteRules.length>i; i++)
+	        for (var j=0; defaultSiteRules[i].contentGroups.length>j; j++)
+	        {
+	          var g = defaultSiteRules[i].contentGroups[j];
+	          g.enabled = (g.default == null ? true : g.default);
+	        }
+	       values.siteRules = defaultSiteRules;
+		}
+
+		process(values.options || {}, values.siteRules);
+	});
+})
 
 function process(options, siteRules)
 {
@@ -471,11 +547,7 @@ function process(options, siteRules)
 						break;
 				}
 
-				if (!cssInjected)						
-				{
-					injectCSS(match.site.injectCSS);
-					cssInjected = true;
-				}
+				injectCSS(match.site.injectCSS);
 
 				var m = options.replaceWith;
 				//if (m == "random") m = modes[Math.floor(Math.random() * modes.length)];
@@ -614,58 +686,31 @@ function buildCache(site)
 	return cache;
 }
 
-var assistEl = null;
-function injectAssist()
-{
-	if (assistEl == null)
-	{
-		var id = styleSelector + '_assist';
-		var el = document.createElement("div");
-		el.id = id;
-		el.setAttribute("style", "position: fixed; left: 0px; top: 0px; right: 0px; z-index: 2147483647; height: auto; display: none; color: #fff; font-weight: bold; background-color: #000; padding: 8px; margin: 0px; text-align: right; font-size: 10pt; font-family: Arial;");
-		document.body.appendChild(el);
-
-		assistEl = el;
-	}
-	return assistEl;
-}
-
 function injectCSS(extra)
 {
-	var styleNode = document.createElement('style');
-	
-	styleNode.innerHTML = "." + styleSelector + " {\
-z-index: 4000;\
-" + extra + "\
-padding: 0px;\
-margin: 0px;\
-overflow: hidden;\
-}\
-." + styleSelector + " img.placeholderImage {\
--webkit-filter: " + buildFilters() + ";\
-}\
-." + styleSelector + " * {\
-color: #000;\
-}\
-." + styleSelector + " .logo {\
--webkit-filter: brightness(50%) contrast(50%);\
-border: 0px;\
-}\
-." + styleSelector + " a {\
-color: black;\
-text-decoration: underline;\
-}\
-." + styleSelector + " input {\
-padding: 4px;\
-}";
+	if (cssInjected) return;
 
-/*
-position: absolute;\
-left: 0px;\
-top: 0px;\
-width: 100%;\
-height: 100%;\
-*/
+	cssInjected = true;
+
+	var styleNode = document.createElement('style');
+
+	var css = styleTemplate;
+	var args = {
+		'selector': styleSelector,
+		'siteCSS': extra,
+		imageFilters: buildFilters()
+	};
+
+	//console.log("css args", args);
+
+	for (var i in args)
+	{
+		css = css.replace(new RegExp('\\$' + i + '\\$', 'g'), args[i]);
+	}
+
+	//console.log("injected CSS\n", css)
+
+	styleNode.innerHTML = css;
 
 	document.body.appendChild(styleNode);
 }

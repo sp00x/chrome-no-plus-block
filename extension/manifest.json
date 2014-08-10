@@ -39,6 +39,9 @@
         "http://*/*",
         "https://*/*"
       ],
+      "css":
+      [
+      ],
       "js":
       [
         "common.js",
@@ -50,7 +53,7 @@
   ],
 
   "background":
-  {
+  {    
     "scripts":
     [
       "common.js",
@@ -58,7 +61,20 @@
     ],
     "persistent": false
   },
-  
+ 
+  "web_accessible_resources":
+  [
+    "inject.*",
+    "injected.*"
+  ],
+
+  "externally_connectable":
+  {
+    "matches":
+    [
+    ]
+  },
+
   "browser_action":
   {
     "default_icon": "img/trash-32.png",

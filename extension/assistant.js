@@ -7,6 +7,13 @@ if (query != "")
 	arg = JSON.parse(unescape(query));
 }
 
+// connect to the content script so it can detect when this window closes
+chrome.tabs.query({ active: true, currentWindow: true }, function(tabs)
+{
+  var tab = tabs[0];
+  var port = chrome.tabs.connect(tab.id, {name: "siteAddAssistant"});
+});
+
 //chrome.tabs.query({ active: true, currentWindow: true }, function tabsQueried(tabs) { chrome.runtime.sendMessage({ type: 'reset', tabId: arg.tabId }) });
 
 ////
@@ -22,6 +29,21 @@ window.onerror = function(msg, url, line, col, error)
   //log("Unhandled error in assist.js: " + msg + ": " + line+":"+col + ": " + error);
 }
 
+window.addEventListener("close", function()
+{
+  log("window close");
+});
+
+window.addEventListener("unload", function()
+{
+  log("window beforeunload");
+});
+
+window.addEventListener("beforeunload", function()
+{
+  log("window beforeunload");
+//  sendToContentScript({ type: 'closeSiteAddAssistant' });
+});
 
 angular.module("assistantApp", [])
 
@@ -52,6 +74,7 @@ angular.module("assistantApp", [])
     $scope.showXPath = false;
     $scope.wildcardStyles = {};
     $scope.previewNode = null;
+    $scope.previewMethod = "overlay";
 
     function updatePreview()
     {
@@ -77,13 +100,14 @@ angular.module("assistantApp", [])
 
       var nodeId = $scope.previewNode == null ? null : $scope.previewNode.id;
       
-      var ev = { type: 'previewSiteAddAssistant', styles: previewStyles, nodeId: nodeId }
+      var ev = { type: 'previewSiteAddAssistant', styles: previewStyles, nodeId: nodeId, method: $scope.previewMethod };
       log("preview:" + JSON.stringify(ev))
       sendToContentScript(ev);
     }
 
     $scope.$watch('styles', updatePreview, true);
     $scope.$watch('previewNode', updatePreview, true);
+    $scope.$watch('previewMethod', updatePreview, true);
 
     var selected = null;
 
@@ -95,8 +119,6 @@ angular.module("assistantApp", [])
 
     $scope.hoverNode = function(link, node)
     {
-      log("hoverNode " + link.nodes.indexOf(node));
-
       $scope.previewNode = node;
 
       if (link == null || node == null)
@@ -109,6 +131,18 @@ angular.module("assistantApp", [])
         for (var i=0; $scope.styles.length>i; i++)
         {
           $scope.styles[i].present = !!node.styles[$scope.styles[i].name];
+        }
+      }
+    }
+
+    $scope.toggleSelector = function(selector)
+    {
+      for (var i=0; $scope.styles.length>i; i++)
+      {
+        var s = $scope.styles[i];
+        if (s.name == selector)
+        {
+          s.selected = !s.selected;
         }
       }
     }
@@ -177,26 +211,6 @@ angular.module("assistantApp", [])
     {
       sendToContentScript({ type: 'endSiteAddAssistant' });
     }
-
-  	$scope.click = function(n)
-  	{
-      if (selected == n)
-      {
-        selected = null;
-      }
-      else
-      {
-        selected = n;      
-        sendToContentScript({ type: 'hoverAssistant', index: $scope.nodes.indexOf(n) })
-		    sendToContentScript({ type: 'clickAssistant', index: $scope.nodes.indexOf(n) })
-      }
-  	}
-
-  	$scope.hover = function(n)
-  	{
-      if (selected == null)
-		    sendToContentScript({ type: 'hoverAssistant', index: $scope.nodes.indexOf(n) })
-  	}
 
   }])
 

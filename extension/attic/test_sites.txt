@@ -1,0 +1,48 @@
+-- norwegian --
+
+adressa.no
+
+budstikka.no
+
+oa.no
+
+vg.no
+
+db.no
+
+ap.no
+
+nrk.no
+
+tv2.no
+
+-- dk --
+
+http://jyllands-posten.dk/
+
+	LI
+	DIV
+
+http://www.bt.dk/
+
+http://ekstrabladet.dk/
+
+	.article-extract
+	.scrollunit
+
+
+-- uk --
+
+http://www.theguardian.com/uk
+
+	LI
+
+dailymail.co.uk
+
+	.article + .article-small
+	LI
+
+www.thesundaytimes.co.uk
+
+
+

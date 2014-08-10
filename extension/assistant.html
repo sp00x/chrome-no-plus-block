@@ -34,6 +34,12 @@
         </span>
       </p>
 
+      <p>Preview method
+        <label><input type="radio" name="previewMethod" ng-model="previewMethod" value="display"> display</label>
+        <label><input type="radio" name="previewMethod" ng-model="previewMethod" value="visibility"> visibility</label>
+        <label><input type="radio" name="previewMethod" ng-model="previewMethod" value="overlay"> opacity/background</label>
+      </p>
+
       <span ng-show="hideNodes == true"><a href="#" ng-click="hideNodes = false">show node details</a></span>
 
       <div ng-hide="hideNodes == true">
@@ -48,9 +54,9 @@
         <h3 style="clear: both">Node hierarchy</h3>
         <ol>
           <li ng-repeat="n in nodes[nodeIndex].nodes" ng-hide="n.shared &amp;&amp; excludeCommonNodes">
-            <a class="astNode" ngclick="clickNode(nodes[nodeIndex], n)" ng-mouseenter="hoverNode(nodes[nodeIndex], n)" ng-mouseleave="hoverNode()">{{n.name}}
-              <span ng-show="showSelectors" ng-repeat="(k, s) in n.styles" class="astNodeSelector"><span ng-if="$index > 0"> | </span>{{k}}</span>
-              <span style="xpath" ng-show="showXPath"><br />{{n.xpath}}</span></a>
+            <span class="astNode" ngclick="clickNode(nodes[nodeIndex], n)" ng-mouseenter="hoverNode(nodes[nodeIndex], n)" ng-mouseleave="hoverNode()">{{n.name}}</span>
+              <span ng-show="showSelectors" ng-repeat="(k, s) in n.styles" class="astNodeSelector"><span ng-if="$index > 0"> | </span><span ng-click="toggleSelector(k)">{{k}}</span></span>
+              <span style="xpath" ng-show="showXPath"><br />{{n.xpath}}</span>
           </li>
         </ol>
         <p>

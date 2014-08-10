@@ -2,6 +2,12 @@
 
 var manifest = chrome.runtime.getManifest();
 
+chrome.runtime.onMessageExternal.addListener(function(msg, sender, callback)
+{
+	console.log("external message: msg=%o, sender=%o", msg, sender);
+	if (callback) callback({ youSaid: msg });
+})
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //// context menu ////////////////////////////////////////////////////////////
@@ -82,10 +88,10 @@ chrome.browserAction.onClicked.addListener(onClickAction);
 function resetBadge(msg, sender, callback)
 {
 	console.log("reset badge");
-	chrome.browserAction.setBadgeBackgroundColor({ tabId: tabId, color: 'red' })
-	chrome.browserAction.setTitle({ title: "", tabId: tabId });
-	chrome.browserAction.setPopup({ tabId: tabId, popup: "details.html" })
-	chrome.browserAction.setBadgeText({ tabId: tabId, text: "" });
+	chrome.browserAction.setBadgeBackgroundColor({ tabId: sender.tab.id, color: 'red' })
+	chrome.browserAction.setTitle({ title: manifest.name, tabId: sender.tab.id });
+	chrome.browserAction.setPopup({ tabId: sender.tab.id, popup: "details.html" })
+	chrome.browserAction.setBadgeText({ tabId: sender.tab.id, text: "" });
 }
 
 function setStats(msg, sender, callback)

@@ -1,4 +1,15 @@
+function log(msg)
+{
+  chrome.runtime.sendMessage({ type: 'log', text: msg });
+}
 
+//log("details window opened")
+
+//chrome.tabs.query({ active: true, currentWindow: true }, function(tabs)
+//{
+//  var tab = tabs[0];
+//  var port = chrome.tabs.connect(tab.id, {name: "assistant"});
+//});
 
 angular.module("detailsApp", [])
 

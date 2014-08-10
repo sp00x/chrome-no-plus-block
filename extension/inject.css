@@ -1,0 +1,87 @@
+.$selector$
+{
+	z-index: 4000;
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+	$siteCSS$
+}
+
+.$selector$ img.placeholderImage
+{
+	-webkit-filter: $imageFilters$;
+}
+
+.$selector$ *
+{
+	color: #000;
+}
+
+.$selector$ .logo
+{
+	-webkit-filter: brightness(50%) contrast(50%);
+	border: 0px;
+}
+
+.$selector$ a
+{
+	color: black;
+	text-decoration: underline;	
+}
+
+.$selector$ input
+{
+	padding: 4px;
+}
+
+.$selector$_panel
+{
+	border: 0px black none;
+	padding: 0px;
+	margin: 0px;
+
+	display: block;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	width: 100%;
+	z-index: 2147483647;
+	height: 0px;
+
+
+	/*
+	padding: 8px;
+	margin: 0px;
+	background-color: #000;
+	color: #fff;
+	font-weight: bold;
+	text-align: right;
+	font-size: 10pt;
+	font-family: Arial;
+	*/
+
+	overflow: hidden;
+
+
+	opacity: 0.0;
+
+	min-height: 0px;
+}
+
+.$selector$_panel > iframe
+{
+	width: 100%;
+}
+
+.$selector$_panel_show
+{
+	height: auto;
+	opacity: 1.0;
+}
+
+.$selector$_panel, .$selector$_panel_show
+{
+	-webkit-transition: height 1s, opacity 1s;
+	transition: height 1s, opacity 1s;
+}
