@@ -1,18 +1,11 @@
-var arg = {};
-
-var query = document.location.search || "";
-if (query && query.length>0) query = query.substring(1);
-if (query != "")
-{
-	arg = JSON.parse(unescape(query));
-}
-
+/*
 // connect to the content script so it can detect when this window closes
 chrome.tabs.query({ active: true, currentWindow: true }, function(tabs)
 {
   var tab = tabs[0];
   var port = chrome.tabs.connect(tab.id, {name: "siteAddAssistant"});
 });
+*/
 
 //chrome.tabs.query({ active: true, currentWindow: true }, function tabsQueried(tabs) { chrome.runtime.sendMessage({ type: 'reset', tabId: arg.tabId }) });
 
@@ -28,22 +21,6 @@ window.onerror = function(msg, url, line, col, error)
   log("error");
   //log("Unhandled error in assist.js: " + msg + ": " + line+":"+col + ": " + error);
 }
-
-window.addEventListener("close", function()
-{
-  log("window close");
-});
-
-window.addEventListener("unload", function()
-{
-  log("window beforeunload");
-});
-
-window.addEventListener("beforeunload", function()
-{
-  log("window beforeunload");
-//  sendToContentScript({ type: 'closeSiteAddAssistant' });
-});
 
 angular.module("assistantApp", [])
 
@@ -62,9 +39,8 @@ angular.module("assistantApp", [])
 
   .controller('AssistantController', [ '$scope', function($scope)
   {
-    $scope.url = arg.url;
-  	$scope.host = "host";
-  	$scope.path = "path";
+    $scope.mode = "collect";
+
   	$scope.nodes = [];
     $scope.styles = [];
     $scope.nodeIndex = 0;
@@ -111,6 +87,21 @@ angular.module("assistantApp", [])
 
     var selected = null;
 
+    window.addEventListener("message", function(e)
+    {
+      console.log("window message received by iframe: %o", e.data)
+      if (e.data.type == '-querySiteAddAssistant')
+      {
+        analyzeMain(e.data.data);
+      }
+    }, false);
+
+
+    $scope.analyze = function()
+    {
+      sendToContentScript({ type: 'querySiteAddAssistant' });
+    }
+
     $scope.removeLink = function(link)
     {
       var i = $scope.nodes.indexOf(link);
@@ -149,7 +140,7 @@ angular.module("assistantApp", [])
 
     log("init assistant")
 
-    sendToContentScript({ type: 'querySiteAddAssistant' }, function(info)
+    function analyzeMain(info)
     {
       $scope.$apply(function()
       {
@@ -204,8 +195,10 @@ angular.module("assistantApp", [])
 
         $scope.wildcardStyles = wildcardStyles;
         $scope.styles = list;
+
+        $scope.mode = "analyze";
       })
-    })
+    }
 
     $scope.end = function()
     {
@@ -216,6 +209,9 @@ angular.module("assistantApp", [])
 
 function sendToContentScript(msg, cb)
 {
+  window.parent.postMessage(msg, '*') 
+
+  /*
   // find the current (active) tab
   chrome.tabs.query(
     {
@@ -232,5 +228,6 @@ function sendToContentScript(msg, cb)
       );
     }
   );
+  */
 }
 

@@ -41,10 +41,13 @@
       ],
       "css":
       [
+        //"content_script_site_assistant.css" // lazy
       ],
       "js":
       [
+        "common_data.js",
         "common.js",
+        "content_script_site_assistant.js",
         "content_script.js"
       ],
       "run_at": "document_idle",
@@ -65,15 +68,10 @@
   "web_accessible_resources":
   [
     "inject.*",
-    "injected.*"
+    "assistant.*",
+    "lib/*",
+    "content_script_site_assistant.css"
   ],
-
-  "externally_connectable":
-  {
-    "matches":
-    [
-    ]
-  },
 
   "browser_action":
   {

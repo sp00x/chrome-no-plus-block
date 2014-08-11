@@ -1,5 +1,55 @@
 var logPrefix = "[" + chrome.runtime.getManifest().name + "]";
 
+function hashToCSS(obj)
+{
+  return Object.keys(obj).map(function(k) { return k + ': ' + obj[k] }).join("; ");
+}
+
+function getXPath(element, preferId)
+{
+  preferId = (preferId == null) ? true : preferId;
+
+    if (preferId && element.id!=='')
+        return 'id("'+element.id+'")';
+
+    if (element === document.body)
+        return element.tagName;
+
+    var ix = 0;
+    var siblings = element.parentNode.childNodes;
+    for (var i = 0; i < siblings.length; i++)
+    {
+        var sibling = siblings[i];
+        if (sibling === element)
+            return getXPath(element.parentNode, preferId) + '/' + element.tagName + '[' + (ix+1) + ']';
+        if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
+            ix++;
+    }
+}
+
+function loadExtensionResource(url, callback)
+{
+  var req = new XMLHttpRequest();
+  req.onload = function()
+  {
+    callback(null, req.status, req.responseText);
+  }
+  req.onerror = function()
+  {
+    callback(e, req.status, req.responseText);
+  }
+  req.open("GET", chrome.extension.getURL(url), true);
+  req.send();
+}
+
+function substituteTemplateVars(template, vars)
+{
+  var text = template; // there is no regex escaping of 'i' or 'vars[i]' here..
+  for (var i in vars)
+    text = text.replace(new RegExp('\\$' + i + '\\$', 'g'), vars[i]);
+  return text;
+}
+
 var log =
 {
   group: function() {}, // console.group,
@@ -74,7 +124,6 @@ var categories =
     color: palette[7]
   }
 ]
-
 
 var defaultCategoryColors =
 {
